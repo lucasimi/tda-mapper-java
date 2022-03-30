@@ -14,7 +14,6 @@ import org.lucasimi.tda.mapper.cover.CoverAlgorithm;
 import org.lucasimi.tda.mapper.graph.MapperEdge;
 import org.lucasimi.tda.mapper.graph.MapperGraph;
 import org.lucasimi.tda.mapper.graph.MapperVertex;
-import org.lucasimi.tda.mapper.topology.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,28 +21,28 @@ public class MapperPipeline<S> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MapperPipeline.class);
 
-	private ClusteringAlgorithm<Point<S>> clusterer;
+	private ClusteringAlgorithm<S> clusterer;
 
-	private CoverAlgorithm<Point<S>> coverAlgorithm;
+	private CoverAlgorithm<S> coverAlgorithm;
 
 	private MapperPipeline(Builder<S> builder) {
 		this.clusterer = builder.clustering;
 		this.coverAlgorithm = builder.coverAlgorithm;
 	}
 
-	private Collection<Collection<Point<S>>> buildCover(List<Point<S>> dataset) {
+	private Collection<Collection<S>> buildCover(List<S> dataset) {
 		long t0 = System.currentTimeMillis();
-		Collection<Collection<Point<S>>> cover = this.coverAlgorithm.groups(dataset);
+		Collection<Collection<S>> cover = this.coverAlgorithm.groups(dataset);
 		long t1 = System.currentTimeMillis();
 		LOGGER.info("Pullback cover computed in {} milliseconds", t1 - t0);
 		return cover;
 	}
 
-	private Collection<Collection<Point<S>>> computeClustering(Collection<Collection<Point<S>>> pullbackCover) {
+	private Collection<Collection<S>> computeClustering(Collection<Collection<S>> pullbackCover) {
 		long t2 = System.currentTimeMillis();
-		Stream<Collection<Point<S>>> parallel = pullbackCover.stream().parallel();
+		Stream<Collection<S>> parallel = pullbackCover.stream().parallel();
 		LOGGER.info("Using parallel computation: {}", parallel.isParallel());
-		Collection<Collection<Point<S>>> clusters = parallel
+		Collection<Collection<S>> clusters = parallel
 			.map(this.clusterer::performClustering)
 			.flatMap(Collection::stream)
 			.collect(Collectors.toList());
@@ -52,29 +51,29 @@ public class MapperPipeline<S> {
 		return clusters;
 	}
 
-	private MapperGraph buildGraph(Collection<Collection<Point<S>>> clusters) {
+	private MapperGraph buildGraph(Collection<Collection<S>> clusters) {
 		long t4 = System.currentTimeMillis();
 		MapperGraph graph = new MapperGraph();
-		Map<Point<S>, Collection<MapperVertex>> vertexMap = buildVertexMap(graph, clusters);
+		Map<S, Collection<MapperVertex>> vertexMap = buildVertexMap(graph, clusters);
 		addEdges(graph, vertexMap);
 		long t5 = System.currentTimeMillis();
 		LOGGER.info("Graph computed in {} milliseconds", t5 - t4);
 		return graph;
 	}
 
-	public MapperGraph run(List<Point<S>> dataset) {
-		Collection<Collection<Point<S>>> cover = buildCover(dataset);
-		Collection<Collection<Point<S>>> clusters = computeClustering(cover);
+	public MapperGraph run(List<S> dataset) {
+		Collection<Collection<S>> cover = buildCover(dataset);
+		Collection<Collection<S>> clusters = computeClustering(cover);
 		return buildGraph(clusters);
 	}
 
-    private Map<Point<S>, Collection<MapperVertex>> buildVertexMap(MapperGraph graph, Collection<Collection<Point<S>>> clusters) {
-		Map<Point<S>, Collection<MapperVertex>> vertexMap = new HashMap<>();
-		for (Collection<Point<S>> cluster : clusters) {
+    private Map<S, Collection<MapperVertex>> buildVertexMap(MapperGraph graph, Collection<Collection<S>> clusters) {
+		Map<S, Collection<MapperVertex>> vertexMap = new HashMap<>();
+		for (Collection<S> cluster : clusters) {
 			if (!cluster.isEmpty()) {
 				MapperVertex vertex = buildVertex(cluster);
 				graph.addVertex(vertex);
-				for (Point<S> data : cluster) {
+				for (S data : cluster) {
 					vertexMap.computeIfAbsent(data, x -> new LinkedList<>());
 					vertexMap.get(data).add(vertex);
 				}
@@ -83,8 +82,8 @@ public class MapperPipeline<S> {
 		return vertexMap;
 	}
 
-	private void addEdges(MapperGraph graph, Map<Point<S>, Collection<MapperVertex>> vertexMap) {
-		for (Entry<Point<S>, Collection<MapperVertex>> entry : vertexMap.entrySet()) {
+	private void addEdges(MapperGraph graph, Map<S, Collection<MapperVertex>> vertexMap) {
+		for (Entry<S, Collection<MapperVertex>> entry : vertexMap.entrySet()) {
 			for (MapperVertex source : entry.getValue()) {
 				for (MapperVertex target : entry.getValue()) {
 					if (!source.equals(target)) {
@@ -106,25 +105,22 @@ public class MapperPipeline<S> {
 		}
 	}
 
-    private MapperVertex buildVertex(Collection<Point<S>> dataset) {
-		Collection<Integer> ids = dataset.stream()
-			.map(Point::getId)
-			.collect(Collectors.toList());
-        return new MapperVertex(ids);
+    private MapperVertex buildVertex(Collection<S> dataset) {
+        return new MapperVertex(new LinkedList<>()); // TODO: improve this
     }
 	
 	public static class Builder<S> {
 		
-		private CoverAlgorithm<Point<S>> coverAlgorithm;
+		private CoverAlgorithm<S> coverAlgorithm;
 
-		private ClusteringAlgorithm<Point<S>> clustering;
+		private ClusteringAlgorithm<S> clustering;
 
-		public Builder<S> withCover(CoverAlgorithm<Point<S>> coveringAlgo) {
+		public Builder<S> withCover(CoverAlgorithm<S> coveringAlgo) {
 			this.coverAlgorithm = coveringAlgo;
 			return this;
 		}
 
-		public Builder<S> withClustering(ClusteringAlgorithm<Point<S>> clustering) {
+		public Builder<S> withClustering(ClusteringAlgorithm<S> clustering) {
 			this.clustering = clustering;
 			return this;
 		}
