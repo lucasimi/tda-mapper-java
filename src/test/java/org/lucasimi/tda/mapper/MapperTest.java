@@ -32,22 +32,26 @@ public class MapperTest {
 	@Test
 	public void testMapperPerf() throws MapperException {
 		int dim = 128;
-		int k = 5;
+		int k = 4;
 		int size = (int) Math.pow(10, k);
+		float side = 1.0f;
 		long t0 = System.currentTimeMillis();
-		ArrayList<Point<float[]>> dataset = DatasetGenerator.randomDataset(size, dim, 0.0f, 1.0f);
+		ArrayList<Point<float[]>> dataset = DatasetGenerator.randomDataset(size, dim, 0.0f, side);
 		long t1 = System.currentTimeMillis();
+		float radius = (float) (side * Math.sqrt(dim) / Math.pow(size, 1.0 / dim));
 		LOGGER.info("Dataset created in {}", t1 - t0);
 		long startTime = System.currentTimeMillis();
 
 		MapperPipeline<float[]> mapperPipeline = new MapperPipeline.Builder<float[]>()
-			.withCover(new BallCover<>(lens, metric, 5.0))
+			.withCover(new BallCover<>(lens, metric, radius * 0.4))
 			.withClustering(clusterer)
 			.build();
 			
-		mapperPipeline.run(dataset);
+		MapperGraph mapperGraph = mapperPipeline.run(dataset);
 		long endTime = System.currentTimeMillis();
 		LOGGER.info("Mapper computed in {}", endTime - startTime);
+		LOGGER.info("Mapper graph has {} vertices", mapperGraph.getVertices().size());
+		LOGGER.info("Mapper graph has {} connected components", mapperGraph.countConnectedComponents());
 	}
 
 	@Test
