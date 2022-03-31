@@ -1,3 +1,9 @@
+# generated files
+**/target
+**/*.classpath
+**/*.project
+**/*.settings
+
 # Compiled class file
 *.class
 
