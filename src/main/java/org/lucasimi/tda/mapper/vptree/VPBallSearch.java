@@ -7,7 +7,7 @@ import java.util.List;
 import org.lucasimi.tda.mapper.topology.Metric;
 import org.lucasimi.tda.mapper.utils.BinaryTree;
 
-class BallSearch<T> {
+class VPBallSearch<T> {
 
 	private final T center;
 
@@ -17,7 +17,7 @@ class BallSearch<T> {
 
     private final Metric<T> metric;
 
-	public BallSearch(Metric<T> metric, T center, double eps, BinaryTree<VPNode<T>> tree) {
+	public VPBallSearch(Metric<T> metric, T center, double eps, BinaryTree<VPNode<T>> tree) {
 		this.center = center;
 		this.eps = eps;
         this.metric = metric;

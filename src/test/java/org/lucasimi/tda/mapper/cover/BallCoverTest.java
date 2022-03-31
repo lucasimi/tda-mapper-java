@@ -25,11 +25,11 @@ public class BallCoverTest {
 		dataset.add(new float[] {1.0f, 1.0f});
 		dataset.add(new float[] {1.0f, 0.0f});
 				
-		BallCover<float[]> covering = new BallCover<>(lens, metric, 0.5);
+		SearchCover<float[]> covering = new SearchCover<>(new BallSearch<>(lens, metric, 0.5));
 		Collection<Collection<float[]>> groups = covering.groups(dataset);
 		Assertions.assertEquals(3, groups.size());
 		
-		covering = new BallCover<>(lens, metric, 1.5);
+		covering = new SearchCover<>(new BallSearch<>(lens, metric, 1.5));
 		groups = covering.groups(dataset);
 		Assertions.assertEquals(1, groups.size());
 	}
@@ -46,11 +46,11 @@ public class BallCoverTest {
 		dataset.add(new float[] {0.0f, -1.1f});
 		dataset.add(new float[] {0.0f, -1.2f});
 		
-		BallCover<float[]> covering = new BallCover<>(lens, metric, 0.5);
+		SearchCover<float[]> covering = new SearchCover<>(new BallSearch<>(lens, metric, 0.5));
 		Collection<Collection<float[]>> groups = covering.groups(dataset);
 		Assertions.assertEquals(2, groups.size());
 		
-		covering = new BallCover<>(lens, metric, 0.09);
+		covering = new SearchCover<>(new BallSearch<>(lens, metric, 0.09));
 		groups = covering.groups(dataset);
 		Assertions.assertEquals(6, groups.size());
 	}
@@ -61,7 +61,7 @@ public class BallCoverTest {
 		dataset.addAll(DatasetGenerator.randomDataset(20000, 2, new float[] {1.0f, 0.0f}, 0.3f));
 		dataset.addAll(DatasetGenerator.randomDataset(20000, 2, new float[] {0.0f, 1.0f}, 0.3f));
 		
-		BallCover<float[]> covering = new BallCover<>(lens, metric, 0.85);
+		SearchCover<float[]> covering = new SearchCover<>(new BallSearch<>(lens, metric, 0.85));
 		Collection<Collection<float[]>> groups = covering.groups(dataset);
 		Assertions.assertEquals(2, groups.size());
 	}

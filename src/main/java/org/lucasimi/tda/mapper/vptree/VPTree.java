@@ -85,12 +85,12 @@ public class VPTree<T> {
 	}
 
 	public List<T> ballSearch(T testPoint, double eps) {
-		BallSearch<T> search = new BallSearch<T>(this.metric, testPoint, eps, this.tree);
+		VPBallSearch<T> search = new VPBallSearch<T>(this.metric, testPoint, eps, this.tree);
 		return search.getPoints();
 	}
 
 	public Set<T> knnSearch(T testPoint, int k) {
-		KNNSearch<T> search = new KNNSearch<T>(this.metric, testPoint, k, this.tree);
+		VPKNNSearch<T> search = new VPKNNSearch<T>(this.metric, testPoint, k, this.tree);
 		return search.extract();
 	}
 
