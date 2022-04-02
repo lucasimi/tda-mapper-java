@@ -25,8 +25,9 @@ public class KNNSearch<S> implements SearchAlgorithm<S> {
     }
 
     @Override
-    public void setup(Collection<S> dataset) {
+    public Collection<S> setup(Collection<S> dataset) {
 		this.vpTree = new VPTree<>(metric, dataset, this.neighbors);
+        return this.vpTree.getCenters();
     }
 
     @Override
