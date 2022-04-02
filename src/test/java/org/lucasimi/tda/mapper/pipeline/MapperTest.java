@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.lucasimi.tda.mapper.DatasetGenerator;
 import org.lucasimi.tda.mapper.clustering.ClusteringAlgorithm;
 import org.lucasimi.tda.mapper.clustering.ClusteringUtils;
+import org.lucasimi.tda.mapper.clustering.DBSCANSimple;
 import org.lucasimi.tda.mapper.cover.BallSearch;
 import org.lucasimi.tda.mapper.cover.SearchCover;
 import org.lucasimi.tda.mapper.topology.Lens;
@@ -66,7 +67,7 @@ public class MapperTest {
 			.build();
 		
 		MapperGraph<float[]> graph = mapperPipeline.run(dataset);
-		Assertions.assertEquals(Integer.valueOf(3), graph.countConnectedComponents());
+		Assertions.assertEquals(3, graph.countConnectedComponents());
 	}
 	
 	@Test
@@ -88,7 +89,7 @@ public class MapperTest {
 
 		MapperGraph<float[]> graph = mapperPipeline.run(dataset);
 		Assertions.assertEquals(6, graph.getVertices().size());
-		Assertions.assertEquals(Integer.valueOf(6), graph.countConnectedComponents());
+		Assertions.assertEquals(6, graph.countConnectedComponents());
 		
 		mapperPipeline = new MapperPipeline.Builder<float[]>()
 			.withCover(new SearchCover<>(new BallSearch<>(lens, metric, 0.15)))
@@ -96,7 +97,7 @@ public class MapperTest {
 			.build();
 
 		graph = mapperPipeline.run(dataset);
-		Assertions.assertEquals(Integer.valueOf(2), graph.countConnectedComponents());
+		Assertions.assertEquals(2, graph.countConnectedComponents());
 	}
 	
 	@Test
@@ -111,7 +112,7 @@ public class MapperTest {
 			.build();
 
 		MapperGraph<float[]> graph = mapperPipeline.run(dataset);
-		Assertions.assertEquals(Integer.valueOf(2), graph.countConnectedComponents());
+		Assertions.assertEquals(2, graph.countConnectedComponents());
 	}
 		
 }

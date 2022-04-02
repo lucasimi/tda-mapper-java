@@ -4,14 +4,14 @@ public class BinaryTree<T> {
 
 	private T data;
 
-	private BinaryTree<T> left;
+	private final BinaryTree<T> left;
 
-	private BinaryTree<T> right;
-	
-	public BinaryTree() {}
+	private final BinaryTree<T> right;
 	
 	public BinaryTree(T data) {
 		this.data = data;
+		this.left = null;
+		this.right = null;
 	}
 	
 	public BinaryTree(T data, BinaryTree<T> left, BinaryTree<T> right) {
@@ -34,10 +34,6 @@ public class BinaryTree<T> {
 	
 	public boolean isTerminal() {
 		return (this.left == null) && (this.right == null);
-	}
-	
-	public void setData(T x) {
-		this.data = x;
 	}
 	
 }

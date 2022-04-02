@@ -25,7 +25,7 @@ public class MapperPipeline<S> {
 
 	private Collection<Collection<S>> buildCover(List<S> dataset) {
 		long t0 = System.currentTimeMillis();
-		Collection<Collection<S>> cover = this.coverAlgorithm.groups(dataset);
+		Collection<Collection<S>> cover = this.coverAlgorithm.getClusters(dataset);
 		long t1 = System.currentTimeMillis();
 		LOGGER.info("Dataset covered in {}ms", t1 - t0);
 		return cover;
