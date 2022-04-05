@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.lucasimi.tda.mapper.DatasetGenerator;
 import org.lucasimi.tda.mapper.clustering.ClusteringAlgorithm;
 import org.lucasimi.tda.mapper.clustering.ClusteringUtils;
-import org.lucasimi.tda.mapper.clustering.DBSCANSimple;
 import org.lucasimi.tda.mapper.cover.BallSearch;
 import org.lucasimi.tda.mapper.cover.SearchCover;
 import org.lucasimi.tda.mapper.topology.Lens;
@@ -31,7 +30,7 @@ public class MapperTest {
 	@Test
 	public void testMapperPerf() throws MapperException {
 		int dim = 128;
-		int k = 4;
+		int k = 5;
 		int size = (int) Math.pow(10, k);
 		float side = 1.0f;
 		long t0 = System.currentTimeMillis();

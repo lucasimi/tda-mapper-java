@@ -55,6 +55,10 @@ public class MapperGraph<S> {
 		}
 	}
 
+	public Map<Vertex, Edge> getAdjaciency(Vertex source) {
+		return this.graph.get(source);
+	}
+
     public int countConnectedComponents() {
 		Set<Vertex> visited = new HashSet<>();
 		int connectedComponents = 0;
@@ -82,7 +86,7 @@ public class MapperGraph<S> {
 		return this.graph.keySet();
 	}
 	
-	private class Vertex {
+	public class Vertex {
 	
 		private final Collection<S> points;
 
@@ -96,7 +100,7 @@ public class MapperGraph<S> {
 
 	}
 
-	private class Edge {
+	public class Edge {
 
 		private double union;
 
