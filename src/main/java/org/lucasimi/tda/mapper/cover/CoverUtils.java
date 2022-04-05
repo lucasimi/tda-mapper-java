@@ -8,10 +8,15 @@ public class CoverUtils {
     private CoverUtils() {}
 
     public static <S> CoverAlgorithm<S> trivialCover() {
-        return dataset -> {
-            Collection<Collection<S>> trivialMap = new LinkedList<>();
-            trivialMap.add(dataset);
-            return trivialMap;
+        return new CoverAlgorithm<S>() {
+
+            @Override
+            public Collection<Collection<S>> getClusters(Collection<S> dataset) {
+                Collection<Collection<S>> trivialMap = new LinkedList<>();
+                trivialMap.add(dataset);
+                return trivialMap;
+            }
+
         };
     }
 

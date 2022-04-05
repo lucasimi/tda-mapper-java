@@ -11,7 +11,7 @@ import org.lucasimi.tda.mapper.topology.TopologyUtils;
 import org.lucasimi.tda.mapper.utils.BinaryTree;
 import org.lucasimi.tda.mapper.utils.MaxHeap;
 
-class KNNSearch<T> {
+class VPKNNSearch<T> {
 
 	T center;
 
@@ -21,7 +21,7 @@ class KNNSearch<T> {
 
     private Metric<T> metric;
 
-	public KNNSearch(Metric<T> metric, T center, int k, BinaryTree<VPNode<T>> tree) {
+	public VPKNNSearch(Metric<T> metric, T center, int k, BinaryTree<VPNode<T>> tree) {
 		this.metric = metric;
 		this.center = center;
 		this.k = k;

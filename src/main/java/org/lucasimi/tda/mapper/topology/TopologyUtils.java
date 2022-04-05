@@ -16,9 +16,8 @@ public class TopologyUtils {
         return (first, second) -> targetMetric.evaluate(lens.evaluate(first), lens.evaluate(second));
     }
 
-    public static Lens<Point<float[]>, Float> euclideanNorm() {
-        return p -> {
-            float[] point = p .getValue();
+    public static Lens<float[], Float> euclideanNorm() {
+        return point -> {
             float sum = 0.0f;
             for (int i = 0; i < point.length; i++) {
                 sum += point[i] * point[i];
@@ -27,10 +26,8 @@ public class TopologyUtils {
         };
     }
 
-    public static Metric<Point<float[]>> euclideanMetric() {
-        return (f, s) -> {
-            float[] first = f.getValue();
-            float[] second = s.getValue();
+    public static Metric<float[]> euclideanMetric() {
+        return (first, second) -> {
             if (first.length != second.length) {
                 return Float.MAX_VALUE;
             }
