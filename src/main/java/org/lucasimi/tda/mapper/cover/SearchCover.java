@@ -1,8 +1,8 @@
 package org.lucasimi.tda.mapper.cover;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 public class SearchCover<S> implements CoverAlgorithm<S> {
 
@@ -15,7 +15,7 @@ public class SearchCover<S> implements CoverAlgorithm<S> {
 	@Override
 	public Collection<Collection<S>> getClusters(Collection<S> dataset) {
 		Collection<S> centers = this.searchAlgorithm.setup(dataset);
-		Collection<Collection<S>> clusters = new LinkedList<>();
+		Collection<Collection<S>> clusters = new ArrayList<>(dataset.size());
 		HashMap<S, Boolean> coverMap = new HashMap<>(dataset.size());
 		for (S point : dataset) {
 			coverMap.put(point, false);
