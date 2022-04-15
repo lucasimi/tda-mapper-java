@@ -30,7 +30,7 @@ public class MapperTest {
 	@Test
 	public void testMapperPerf() throws MapperException {
 		int dim = 128;
-		int k = 5;
+		int k = 4;
 		int size = (int) Math.pow(10, k);
 		float side = 1.0f;
 		long t0 = System.currentTimeMillis();
