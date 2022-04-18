@@ -5,53 +5,60 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.lucasimi.tda.mapper.topology.Lens;
 import org.lucasimi.tda.mapper.topology.Metric;
-import org.lucasimi.tda.mapper.topology.TopologyUtils;
 import org.lucasimi.tda.mapper.utils.BinaryTree;
 import org.lucasimi.tda.mapper.utils.MaxHeap;
 
 class VPKNNSearch<T> {
 
-	T center;
+	private final T center;
 
-	private int k;
+	private final int neighbors;
 
-	private MaxHeap<T> points;
+    private final Metric<T> metric;
 
-    private Metric<T> metric;
+	private final MaxHeap<HeapNode> points;
 
-	public VPKNNSearch(Metric<T> metric, T center, int k, BinaryTree<VPNode<T>> tree) {
-		this.metric = metric;
+	private class HeapNode {
+
+		float dist;
+
+		T point;
+
+		public HeapNode(T point) {
+			this.point = point;
+			this.dist = metric.evaluate(point, center);
+		}
+
+	}
+
+	public VPKNNSearch(Metric<T> metric, T center, int neighbors, BinaryTree<VPNode<T>> tree) {
 		this.center = center;
-		this.k = k;
-		Lens<T, Float> distFrom = TopologyUtils.distFrom(this.metric, center);
-		Comparator<T> distFromComparator = (arg0, arg1) -> {
-			Float val0 = distFrom.evaluate(arg0);
-			Float val1 = distFrom.evaluate(arg1);
-			return Float.compare(val0, val1);
-		};
-		this.points = new MaxHeap<>(distFromComparator);
-		search(tree);
+		this.neighbors = neighbors;
+		this.metric = metric;
+		Comparator<HeapNode> distComparator = (arg0, arg1) -> Float.compare(arg0.dist, arg1.dist);
+		this.points = new MaxHeap<>(distComparator, neighbors);
+		this.search(tree);
 	}
 
 	public void addAll(Collection<T> data) {
-		this.points.addAll(data, this.k);
+		data.stream()
+			.map(HeapNode::new)
+			.forEach(b -> this.points.add(b, this.neighbors));
 	}
 
 	public double getRadius() {
-		if (this.points.size() < this.k) {
+		if (this.points.size() < this.neighbors) {
 			return Float.POSITIVE_INFINITY;
 		} else {
-			T furthest = this.points.getMax();
-			return this.metric.evaluate(this.center, furthest);
+			return this.points.getMax().dist;
 		}
 	}
 
 	public Set<T> extract() {
 		Set<T> collected = new HashSet<>();
 		while (!this.points.isEmpty()) {
-			this.points.extractMax().ifPresent(collected::add);
+			this.points.extractMax().map(b -> b.point).ifPresent(collected::add);
 		}
 		return collected;
 	}
@@ -63,33 +70,14 @@ class VPKNNSearch<T> {
 			T center = tree.getData().getCenter();
 			double radius = tree.getData().getRadius();
 			double dist = this.metric.evaluate(this.center, center);
-			if (dist < radius) {
-				knnSearchInside(tree);
-			} else {
-				knnSearchOutside(tree);
+			double eps = this.getRadius();
+			if (dist <= radius + eps) {
+				this.search(tree.getLeft());
+				eps = this.getRadius();
+			} 
+			if (dist > radius - eps) {
+				this.search(tree.getRight());
 			}	
-		}
-	}
-
-	private void knnSearchInside(BinaryTree<VPNode<T>> tree) {
-		T center = tree.getData().getCenter();
-		double radius = tree.getData().getRadius();
-		search(tree.getLeft());
-		double firstEstimation = this.getRadius();
-		double dist = this.metric.evaluate(this.center, center); 
-		if (dist + firstEstimation > radius) {
-			search(tree.getRight());
-		}
-	}
-	
-	private void knnSearchOutside(BinaryTree<VPNode<T>> tree) {
-		T center = tree.getData().getCenter();
-		double radius = tree.getData().getRadius();
-		search(tree.getRight());
-		double firstEstimation = this.getRadius();
-		double dist = this.metric.evaluate(this.center, center); 
-		if (dist < radius + firstEstimation) {
-			search(tree.getLeft());
 		}
 	}
 	

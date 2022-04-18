@@ -53,19 +53,23 @@ public class VPTree<T> {
     }
 
 	private BinaryTree<VPNode<T>> buildWithoutLeafRadius(int start, int end) {
-		if (end - start <= this.leafSize) {
-			for (int i = start; i < end; i++) {
+		int mid = (start + end) / 2;
+		T vp = pickVantagePoint(start, end);
+		double radius = performPivoting(vp, start, end, mid);
+		BinaryTree<VPNode<T>> leftTree;
+		BinaryTree<VPNode<T>> rightTree;
+		if (end - start <= 2 * this.leafSize) {
+			leftTree = new BinaryTree<>(new VPNodeLeaf<>(this.dataset, start, mid));
+			this.centers.add(vp);
+			rightTree = new BinaryTree<>(new VPNodeLeaf<>(this.dataset, mid, end));
+			for (int i = mid; i < end; i++) {
 				this.centers.add(this.dataset.get(i));
 			}
-			return new BinaryTree<>(new VPNodeLeaf<>(this.dataset, start, end));
 		} else {
-			int mid = (start + end) / 2;
-			T vp = pickVantagePoint(start, end);
-			double radius = performPivoting(vp, start, end, mid);
-			BinaryTree<VPNode<T>> leftTree = buildWithoutLeafRadius(start, mid);
-			BinaryTree<VPNode<T>> rightTree = buildWithoutLeafRadius(mid, end);
-			return new BinaryTree<>(new VPNodeSplit<T>(vp, radius), leftTree, rightTree);
+			leftTree = buildWithoutLeafRadius(start, mid);
+			rightTree = buildWithoutLeafRadius(mid, end);
 		}
+		return new BinaryTree<>(new VPNodeSplit<T>(vp, radius), leftTree, rightTree);
 	}
 
 	private T pickVantagePoint(int start, int end) {
@@ -80,31 +84,24 @@ public class VPTree<T> {
 	}
 
 	private BinaryTree<VPNode<T>> buildWithLeafRadius(int start, int end) {
-		if (end - start <= this.leafSize) {
-			for (int i = start; i < end; i++) {
+		int mid = (start + end) / 2;
+		T vp = pickVantagePoint(start, end);
+		double radius = performPivoting(vp, start, end, mid);
+		BinaryTree<VPNode<T>> leftTree;
+		BinaryTree<VPNode<T>> rightTree;
+		if (radius < this.leafRadius || end - start <= 2 * this.leafSize) {
+			leftTree = new BinaryTree<>(new VPNodeLeaf<>(this.dataset, start, mid));
+			this.centers.add(vp);
+			rightTree = new BinaryTree<>(new VPNodeLeaf<>(this.dataset, mid, end));
+			for (int i = mid; i < end; i++) {
 				this.centers.add(this.dataset.get(i));
 			}
-			return new BinaryTree<>(new VPNodeLeaf<>(this.dataset, start, end));
 		} else {
-			int mid = (start + end) / 2;
-			T vp = pickVantagePoint(start, end);
-			double radius = performPivoting(vp, start, end, mid);
-			BinaryTree<VPNode<T>> leftTree;
-			BinaryTree<VPNode<T>> rightTree;
-			if (radius < this.leafRadius) {
-				leftTree = new BinaryTree<>(new VPNodeLeaf<>(this.dataset, start, mid));
-				this.centers.add(vp);
-				rightTree = new BinaryTree<>(new VPNodeLeaf<>(this.dataset, mid, end));
-				for (int i = mid; i < end; i++) {
-					this.centers.add(this.dataset.get(i));
-				}
-			} else {
-				leftTree = buildWithLeafRadius(start, mid);
-				rightTree = buildWithLeafRadius(mid, end);
-			}
-			VPNode<T> container = new VPNodeSplit<>(vp, radius);
-			return new BinaryTree<>(container, leftTree, rightTree);
+			leftTree = buildWithLeafRadius(start, mid);
+			rightTree = buildWithLeafRadius(mid, end);
 		}
+		VPNode<T> container = new VPNodeSplit<>(vp, radius);
+		return new BinaryTree<>(container, leftTree, rightTree);
 	}
 
 	public List<T> ballSearch(T testPoint, double eps) {
