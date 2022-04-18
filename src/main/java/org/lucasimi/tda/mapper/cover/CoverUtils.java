@@ -1,7 +1,7 @@
 package org.lucasimi.tda.mapper.cover;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 
 public class CoverUtils {
     
@@ -12,7 +12,7 @@ public class CoverUtils {
 
             @Override
             public Collection<Collection<S>> getClusters(Collection<S> dataset) {
-                Collection<Collection<S>> trivialMap = new LinkedList<>();
+                Collection<Collection<S>> trivialMap = new ArrayList<>(1);
                 trivialMap.add(dataset);
                 return trivialMap;
             }

@@ -1,7 +1,7 @@
 package org.lucasimi.tda.mapper.clustering;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 
 public class ClusteringUtils {
     
@@ -9,7 +9,7 @@ public class ClusteringUtils {
 
     public static <S> ClusteringAlgorithm<S> trivialClustering() {
         return dataset -> {
-            Collection<Collection<S>> trivialMap = new LinkedList<>();
+            Collection<Collection<S>> trivialMap = new ArrayList<>(1);
             trivialMap.add(dataset);
             return trivialMap;
         };

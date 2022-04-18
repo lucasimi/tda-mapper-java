@@ -1,19 +1,21 @@
 package org.lucasimi.tda.mapper.utils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 public class MaxHeap<T> {
     
-    private ArrayList<T> array;
+    private List<T> array;
 
     private Comparator<T> comparator;
 
-    public MaxHeap(Comparator<T> comparator) {
+    public MaxHeap(Comparator<T> comparator, int capacity) {
         this.comparator = comparator;
-        this.array = new ArrayList<>();
+        //this.array = new ArrayList<>(capacity + 1);
+        this.array = new LinkedList<>();
     }
 
     public T getMax() {
@@ -47,6 +49,13 @@ public class MaxHeap<T> {
             parentValue = this.array.get(parentIndex);
         }
         return true;
+    }
+
+    public void add(T value, int maxSize) {
+        this.add(value);
+        while (this.size() > maxSize) {
+            this.extractMax();
+        }
     }
 
     public void addAll(Collection<T> values) {

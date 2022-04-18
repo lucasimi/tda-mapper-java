@@ -10,7 +10,7 @@ public class MaxHeapTest {
     
     @Test
     public void testMax() {
-        MaxHeap<Integer> heap = new MaxHeap<>((x, y) -> Integer.compare(x, y));
+        MaxHeap<Integer> heap = new MaxHeap<>((x, y) -> Integer.compare(x, y), 1);
         Collection<Integer> points = new LinkedList<>();
         for (int i = 0; i < 20; i++) {
             points.add(i);
@@ -28,7 +28,7 @@ public class MaxHeapTest {
 
     @Test
     public void testIdentical() {
-        MaxHeap<Integer> heap = new MaxHeap<>((x, y) -> Integer.compare(x, y));
+        MaxHeap<Integer> heap = new MaxHeap<>((x, y) -> Integer.compare(x, y), 1);
         Collection<Integer> points = new LinkedList<>();
         for (int i = 0; i < 20; i++) {
             points.add(10);

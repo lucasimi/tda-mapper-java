@@ -30,7 +30,7 @@ public class MapperTest {
 	@Test
 	public void testMapperPerf() throws MapperException {
 		int dim = 128;
-		int k = 5;
+		int k = 4;
 		int size = (int) Math.pow(10, k);
 		float side = 1.0f;
 		long t0 = System.currentTimeMillis();
@@ -106,7 +106,7 @@ public class MapperTest {
 		dataset.addAll(DatasetGenerator.randomDataset(20000, 2, new float[] {0.0f, 1.0f}, 0.3f));
 		
 		MapperPipeline<float[]> mapperPipeline = new MapperPipeline.Builder<float[]>()
-			.withCover(new SearchCover<>(new BallSearch<>(lens, metric, 0.03)))
+			.withCover(new SearchCover<>(new BallSearch<>(lens, metric, 0.5)))
 			.withClustering(clusterer)
 			.build();
 

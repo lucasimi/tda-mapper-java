@@ -8,14 +8,16 @@ public class Pivoter {
 
 	private Pivoter() {}
 	
-	private static <T> void swap(List<T> data, int i, int j) {
+	private static final <T> void swap(List<T> data, int i, int j) {
 		T xi = data.get(i);
 		T xj = data.get(j);
 		data.set(i, xj);
 		data.set(j, xi);
 	}
 	
-	public static <T> void quickSelect(Lens<T, Float> lens, List<T> data, int start, int end, int k) {
+	/* Iteratively apply pivotAt until the pivoting element is in the right position,
+	** according to the order given by lens. */
+	public static final <T> void quickSelect(Lens<T, Float> lens, List<T> data, int start, int end, int k) {
 		int startIndex = start;
 		int endIndex = end;
 		Integer higher = null;
@@ -28,8 +30,11 @@ public class Pivoter {
 			}
 		}
 	}
-		
-	private static <T> int pivotAt(Lens<T, Float> lens, List<T> data, int start, int end, int i) {
+	
+	/* Swap on the rightmost part, those elements of data having lens(data[j]) > lens(data[i]).
+	** As a consequence x[i] will take its correct place according to the total order given by lens.
+	** Returns the new index of x[i] */ 
+	private static final <T> int pivotAt(Lens<T, Float> lens, List<T> data, int start, int end, int i) {
 		swap(data, start, i);
 		T startElem = data.get(start);
 		float startValue = lens.evaluate(startElem);
