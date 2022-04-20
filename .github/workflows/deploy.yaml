@@ -2,7 +2,7 @@ name: deploy
 on: [pull_request]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -12,5 +12,5 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Build with Maven
+      - name: Run Maven
         run: mvn --batch-mode --update-snapshots clean deploy
