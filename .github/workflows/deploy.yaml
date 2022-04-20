@@ -1,9 +1,12 @@
 name: deploy
 on:
-  pull_request_target:
+  pull_request:
+    branches:    
+      - main
     types:
       - closed
-    branches:    
+  push:
+    branches:
       - main
 
 jobs:
