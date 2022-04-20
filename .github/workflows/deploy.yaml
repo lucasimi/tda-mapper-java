@@ -1,13 +1,13 @@
 name: deploy
 on:
-  pull_request_target:
+  pull_request:
     types:
       - closed
     branches:    
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
