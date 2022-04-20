@@ -3,11 +3,10 @@ name: test
 on: 
   push:
     branches:
-      - main
       - develop
 
 jobs:
-  verify:
+  build:
     runs-on: ubuntu-latest
 
     steps:
