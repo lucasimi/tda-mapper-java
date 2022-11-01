@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.lucasimi.tda.mapper.DatasetGenerator;
 import org.lucasimi.tda.mapper.topology.Lens;
-import org.lucasimi.tda.mapper.topology.Metric;
 import org.lucasimi.tda.mapper.topology.TopologyUtils;
+import org.lucasimi.utils.Metric;
 
 public class BallCoverTest {
 
