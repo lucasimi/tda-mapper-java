@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.lucasimi.tda.mapper.topology.Metric;
+import org.lucasimi.utils.Metric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +86,7 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
 	private List<T> getNeighbors(Collection<T> data, T point, double eps) {
 		List<T> neighbors = new ArrayList<>(data.size());
 		for (T p : data) {
-			if (this.metric.evaluate(point, p) < eps) {
+			if (this.metric.eval(point, p) < eps) {
 				neighbors.add(p);
 			}
 		}

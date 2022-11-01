@@ -12,8 +12,8 @@ import org.lucasimi.tda.mapper.clustering.ClusteringUtils;
 import org.lucasimi.tda.mapper.cover.BallSearch;
 import org.lucasimi.tda.mapper.cover.SearchCover;
 import org.lucasimi.tda.mapper.topology.Lens;
-import org.lucasimi.tda.mapper.topology.Metric;
 import org.lucasimi.tda.mapper.topology.TopologyUtils;
+import org.lucasimi.utils.Metric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
