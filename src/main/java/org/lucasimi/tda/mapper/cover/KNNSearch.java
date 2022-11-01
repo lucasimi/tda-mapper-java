@@ -10,14 +10,14 @@ import org.lucasimi.vptree.VPTree;
 public class KNNSearch<S> implements SearchAlgorithm<S> {
 
     private int neighbors;
-    
+
     private Metric<S> metric;
 
-	private VPTree<S> vpTree;
-	
-	public <T> KNNSearch(Lens<S, T> lens, Metric<T> metric, int neighbors) {
-		this(TopologyUtils.pullback(lens, metric), neighbors);
-	}
+    private VPTree<S> vpTree;
+
+    public <T> KNNSearch(Lens<S, T> lens, Metric<T> metric, int neighbors) {
+        this(TopologyUtils.pullback(lens, metric), neighbors);
+    }
 
     public KNNSearch(Metric<S> metric, int neighbors) {
         this.neighbors = neighbors;
@@ -37,5 +37,5 @@ public class KNNSearch<S> implements SearchAlgorithm<S> {
     public Collection<S> getNeighbors(S point) {
         return this.vpTree.knnSearch(point, this.neighbors);
     }
-    
+
 }
