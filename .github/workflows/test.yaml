@@ -19,4 +19,4 @@ jobs:
         run: mvn --batch-mode --update-snapshots clean verify
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          PUBLIC_REPOS_PAT: ${{ secrets.PUBLIC_REPOS_PAT }}
