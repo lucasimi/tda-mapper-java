@@ -19,8 +19,8 @@
     <distributionManagement> 
         <repository>
             <id>github</id>
-            <name>GitHub lucasimi Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/lucasimi/tda-mapper-java</url>
+            <name>GitHub Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/lucasimi/vptree-java</url>
         </repository>
     </distributionManagement>
     <dependencies>
