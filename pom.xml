@@ -16,11 +16,21 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 		<junit-platform.version>5.3.1</junit-platform.version>
     </properties>
-    <distributionManagement> 
+    <repositories>
         <repository>
-            <id>github</id>
+            <id>github-dependencies</id>
             <name>GitHub Apache Maven Packages</name>
             <url>https://maven.pkg.github.com/lucasimi/vptree-java</url>
+        </repository>
+    </repositories>
+    <distributionManagement> 
+        <repository>
+            <id>github-deploy</id>
+            <name>GitHub Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/lucasimi/tda-mapper-java</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </distributionManagement>
     <dependencies>

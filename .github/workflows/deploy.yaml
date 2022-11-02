@@ -9,13 +9,14 @@ jobs:
   deploy-job:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 11
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Run Maven
+      - name: Publish Maven Package
         run: mvn --batch-mode --update-snapshots clean deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
