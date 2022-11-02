@@ -16,7 +16,8 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Publish Maven Package
+      - name: Publish Maven package
         run: mvn --batch-mode --update-snapshots clean deploy
         env:
-          INSTALL_PAT: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGES_READ_PAT: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGES_WRITE_PAT: ${{ secrets.GITHUB_TOKEN }}

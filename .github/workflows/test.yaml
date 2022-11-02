@@ -16,7 +16,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Run Tests
+      - name: Run tests
         run: mvn --batch-mode --update-snapshots clean verify
         env:
-          INSTALL_PAT: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGES_READ_PAT: ${{ secrets.GITHUB_TOKEN }}

@@ -1,14 +1,14 @@
 <settings>
   <servers>
     <server>
-      <id>github-dependencies</id>
+      <id>vptree-java</id>
       <username>lucasimi</username>
-      <password>${env.INSTALL_PAT}</password>
+      <password>${env.PACKAGES_READ_PAT}</password>
     </server>
     <server>
-      <id>github-deploy</id>
+      <id>tda-mapper-java</id>
       <username>lucasimi</username>
-      <password>${env.INSTALL_PAT}</password>
+      <password>${env.PACKAGES_WRITE_PAT}</password>
     </server>
   </servers>
 </settings>
