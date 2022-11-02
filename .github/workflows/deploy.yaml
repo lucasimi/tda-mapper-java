@@ -20,3 +20,4 @@ jobs:
         run: mvn --batch-mode --update-snapshots clean deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INSTALL_PAT: ${{ secrets.INSTALL_PAT }}
