@@ -5,5 +5,10 @@
       <username>lucasimi</username>
       <password>${env.INSTALL_PAT}</password>
     </server>
+    <server>
+      <id>github-deploy</id>
+      <username>lucasimi</username>
+      <password>${env.INSTALL_PAT}</password>
+    </server>
   </servers>
 </settings>
