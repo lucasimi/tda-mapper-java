@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.lucasimi.tda.mapper.topology.Metric;
-import org.lucasimi.tda.mapper.vptree.VPTree;
+import org.lucasimi.utils.Metric;
+import org.lucasimi.vptree.VPTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,21 +58,20 @@ public class DBSCANFaster<T> implements ClusteringAlgorithm<T> {
 	
 	private Collection<T> propagateCluster(final Collection<T> cluster,
                                     final T point,
-                                    final List<T> neighbors,
+                                    final Collection<T> neighbors,
                                     final VPTree<T> ballTree,
                                     final Map<T, PointStatus> visited) {
 		cluster.add(point);
         visited.put(point, PointStatus.CLUSTERED);
-
         List<T> seeds = new ArrayList<>(neighbors);
         int index = 0;
         while (index < seeds.size()) {
             final T currentPoint = seeds.get(index);
             PointStatus pointStatus = visited.get(currentPoint);
             if (pointStatus == null) {
-                final List<T> currentNeighbors = getNeighbors(ballTree, currentPoint, eps);
+                final Collection<T> currentNeighbors = getNeighbors(ballTree, currentPoint, eps);
                 if (currentNeighbors.size() >= minSamples) {
-                    seeds = merge(seeds, currentNeighbors);
+                    merge(seeds, currentNeighbors);
                 }
             }
             if (pointStatus != PointStatus.CLUSTERED) {
@@ -84,19 +83,22 @@ public class DBSCANFaster<T> implements ClusteringAlgorithm<T> {
         return cluster;
 	}
 
-	private List<T> getNeighbors(VPTree<T> vpTree, T point, double eps) {
+	private Collection<T> getNeighbors(VPTree<T> vpTree, T point, double eps) {
         return vpTree.ballSearch(point, eps);
 	}
 
 	public Collection<Collection<T>> performClustering(final Collection<T> points) {
-        VPTree<T> vpTree = new VPTree<>(metric, points, minSamples);
+        VPTree<T> vpTree = new VPTree.Builder<T>()
+            .withMetric(metric)
+            .withLeafCapacity(minSamples)
+            .build(points);
         final Collection<Collection<T>> clusters = new ArrayList<>();
         final Map<T, PointStatus> visited = new HashMap<>();
         for (final T point : points) {
             if (visited.get(point) != null) {
                 continue;
             }
-            final List<T> neighbors = getNeighbors(vpTree, point, eps);
+            final Collection<T> neighbors = getNeighbors(vpTree, point, eps);
             if (neighbors.size() >= minSamples) {
                 final List<T> cluster = new ArrayList<>();
                 clusters.add(propagateCluster(cluster, point, neighbors, vpTree, visited));
@@ -107,14 +109,13 @@ public class DBSCANFaster<T> implements ClusteringAlgorithm<T> {
         return clusters;
     }
 
-	private List<T> merge(final List<T> one, final List<T> two) {
+	private void merge(final Collection<T> one, final Collection<T> two) {
         final Set<T> oneSet = new HashSet<>(one);
         for (T item : two) {
             if (!oneSet.contains(item)) {
                 one.add(item);
             }
         }
-        return one;
     }
 
 }

@@ -1,5 +1,7 @@
 package org.lucasimi.tda.mapper.topology;
 
+import org.lucasimi.utils.Metric;
+
 public class TopologyUtils {
     
     private TopologyUtils() {}
@@ -8,12 +10,12 @@ public class TopologyUtils {
         return source -> source;
     }
 
-    public static <S> Lens<S, Float> distFrom(Metric<S> metric, S center) {
-        return point -> metric.evaluate(center, point);
+    public static <S> Lens<S, Double> distFrom(Metric<S> metric, S center) {
+        return point -> metric.eval(center, point);
     }
 
     public static <S, T> Metric<S> pullback(Lens<S, T> lens, Metric<T> targetMetric) {
-        return (first, second) -> targetMetric.evaluate(lens.evaluate(first), lens.evaluate(second));
+        return (first, second) -> targetMetric.eval(lens.evaluate(first), lens.evaluate(second));
     }
 
     public static Lens<float[], Float> euclideanNorm() {
