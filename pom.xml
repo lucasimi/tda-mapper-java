@@ -18,7 +18,7 @@
     </properties>
     <repositories>
         <repository>
-            <id>github-dependencies</id>
+            <id>vptree-java</id>
             <name>GitHub Apache Maven Packages</name>
             <url>https://maven.pkg.github.com/lucasimi/vptree-java</url>
             <snapshots>
@@ -28,7 +28,7 @@
     </repositories>
     <distributionManagement> 
         <repository>
-            <id>github-deploy</id>
+            <id>tda-mapper-java</id>
             <name>GitHub Apache Maven Packages</name>
             <url>https://maven.pkg.github.com/lucasimi/tda-mapper-java</url>
             <snapshots>

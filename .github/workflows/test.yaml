@@ -19,4 +19,4 @@ jobs:
       - name: Run Tests
         run: mvn --batch-mode --update-snapshots clean verify
         env:
-          INSTALL_PAT: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGES_READ_PAT: ${{ secrets.GITHUB_TOKEN }}
