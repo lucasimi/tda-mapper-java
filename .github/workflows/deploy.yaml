@@ -19,4 +19,4 @@ jobs:
       - name: Publish Maven Package
         run: mvn --batch-mode --update-snapshots clean deploy
         env:
-          INSTALL_PAT: ${{ secrets.INSTALL_PAT }}
+          INSTALL_PAT: ${{ secrets.GITHUB_TOKEN }}
