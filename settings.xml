@@ -1,0 +1,9 @@
+<settings>
+  <servers>
+    <server>
+      <id>github-dependencies</id>
+      <username>lucasimi</username>
+      <password>${env.INSTALL_PAT}</password>
+    </server>
+  </servers>
+</settings>

@@ -9,14 +9,14 @@ jobs:
   test-job:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 11
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Run Maven
+      - name: Run Tests
         run: mvn --batch-mode --update-snapshots clean verify
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLIC_REPOS_PAT: ${{ secrets.PUBLIC_REPOS_PAT }}
+          INSTALL_PAT: ${{ secrets.GITHUB_TOKEN }}

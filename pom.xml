@@ -21,6 +21,9 @@
             <id>github-dependencies</id>
             <name>GitHub Apache Maven Packages</name>
             <url>https://maven.pkg.github.com/lucasimi/vptree-java</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
     <distributionManagement> 
