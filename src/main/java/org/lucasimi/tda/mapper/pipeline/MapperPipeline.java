@@ -12,70 +12,74 @@ import org.slf4j.LoggerFactory;
 
 public class MapperPipeline<S> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MapperPipeline.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapperPipeline.class);
 
-	private ClusteringAlgorithm<S> clusterer;
+    private ClusteringAlgorithm<S> clusterer;
 
-	private CoverAlgorithm<S> coverAlgorithm;
+    private CoverAlgorithm<S> coverAlgorithm;
 
-	private MapperPipeline(Builder<S> builder) {
-		this.clusterer = builder.clustering;
-		this.coverAlgorithm = builder.coverAlgorithm;
-	}
+    private MapperPipeline(Builder<S> builder) {
+        this.clusterer = builder.clustering;
+        this.coverAlgorithm = builder.coverAlgorithm;
+    }
 
-	private Collection<Collection<S>> buildCover(List<S> dataset) {
-		long t0 = System.currentTimeMillis();
-		Collection<Collection<S>> cover = this.coverAlgorithm.getClusters(dataset);
-		long t1 = System.currentTimeMillis();
-		LOGGER.info("Dataset covered in {}ms", t1 - t0);
-		return cover;
-	}
+    private Collection<Collection<S>> buildCover(List<S> dataset) {
+        long t0 = System.currentTimeMillis();
+        Collection<Collection<S>> cover = this.coverAlgorithm.getClusters(dataset);
+        long t1 = System.currentTimeMillis();
+        LOGGER.info("Dataset covered in {}ms", t1 - t0);
+        return cover;
+    }
 
-	private Collection<Collection<S>> computeClustering(Collection<Collection<S>> pullbackCover) {
-		long t2 = System.currentTimeMillis();
-		Stream<Collection<S>> parallel = pullbackCover.stream().parallel();
-		LOGGER.info("Using parallel computation: {}", parallel.isParallel());
-		Collection<Collection<S>> clusters = parallel
-			.map(this.clusterer::performClustering)
-			.flatMap(Collection::stream)
-			.collect(Collectors.toList());
-		long t3 = System.currentTimeMillis();
-		LOGGER.info("Clustering computed in {}ms", t3 - t2);
-		return clusters;
-	}
+    private Collection<Collection<S>> computeClustering(Collection<Collection<S>> pullbackCover) {
+        long t2 = System.currentTimeMillis();
+        Stream<Collection<S>> parallel = pullbackCover.stream().parallel();
+        LOGGER.info("Using parallel computation: {}", parallel.isParallel());
+        Collection<Collection<S>> clusters = parallel
+                .map(this.clusterer::performClustering)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        long t3 = System.currentTimeMillis();
+        LOGGER.info("Clustering computed in {}ms", t3 - t2);
+        return clusters;
+    }
 
-	public MapperGraph<S> run(List<S> dataset) {
-		Collection<Collection<S>> cover = buildCover(dataset);
-		Collection<Collection<S>> clusters = computeClustering(cover);
-		return new MapperGraph<>(clusters);
-	}
-	
-	public static class Builder<S> {
-		
-		private CoverAlgorithm<S> coverAlgorithm;
+    public MapperGraph<S> run(List<S> dataset) {
+        long t0 = System.currentTimeMillis();
+        Collection<Collection<S>> cover = buildCover(dataset);
+        Collection<Collection<S>> clusters = computeClustering(cover);
+        MapperGraph<S> graph = new MapperGraph<>(clusters);
+        long t1 = System.currentTimeMillis();
+        LOGGER.info("Mapper Graph built in {}ms", t1 - t0);
+        return graph;
+    }
 
-		private ClusteringAlgorithm<S> clustering;
+    public static class Builder<S> {
 
-		public Builder<S> withCover(CoverAlgorithm<S> coveringAlgo) {
-			this.coverAlgorithm = coveringAlgo;
-			return this;
-		}
+        private CoverAlgorithm<S> coverAlgorithm;
 
-		public Builder<S> withClustering(ClusteringAlgorithm<S> clustering) {
-			this.clustering = clustering;
-			return this;
-		}
+        private ClusteringAlgorithm<S> clustering;
 
-		public MapperPipeline<S> build() throws MapperException {
-			if (this.clustering == null) {
-				throw new MapperException.NoClusteringAlgorithm();
-			} else if (this.coverAlgorithm == null) {
-				throw new MapperException.NoCoverAlgorithm();
-			} else {			
-				return new MapperPipeline<>(this);
-			}
-		}
-		
-	}
-	
+        public Builder<S> withCover(CoverAlgorithm<S> coveringAlgo) {
+            this.coverAlgorithm = coveringAlgo;
+            return this;
+        }
+
+        public Builder<S> withClustering(ClusteringAlgorithm<S> clustering) {
+            this.clustering = clustering;
+            return this;
+        }
+
+        public MapperPipeline<S> build() throws MapperException {
+            if (this.clustering == null) {
+                throw new MapperException.NoClusteringAlgorithm();
+            } else if (this.coverAlgorithm == null) {
+                throw new MapperException.NoCoverAlgorithm();
+            } else {
+                return new MapperPipeline<>(this);
+            }
+        }
+
+    }
+
 }
