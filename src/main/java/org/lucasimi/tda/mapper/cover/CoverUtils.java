@@ -1,20 +1,27 @@
 package org.lucasimi.tda.mapper.cover;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class CoverUtils {
-    
-    private CoverUtils() {}
+
+    private CoverUtils() {
+    }
 
     public static <S> CoverAlgorithm<S> trivialCover() {
         return new CoverAlgorithm<S>() {
 
+            private Collection<S> dataset;
+
             @Override
-            public Collection<Collection<S>> getClusters(Collection<S> dataset) {
-                Collection<Collection<S>> trivialMap = new ArrayList<>(1);
-                trivialMap.add(dataset);
-                return trivialMap;
+            public CoverAlgorithm<S> fit(Collection<S> dataset) {
+                this.dataset = dataset;
+                return this;
+            }
+
+            @Override
+            public Collection<Collection<S>> getCover() {
+                return Collections.singleton(this.dataset);
             }
 
         };

@@ -1,17 +1,57 @@
 package org.lucasimi.tda.mapper.clustering;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class ClusteringUtils {
-    
-    private ClusteringUtils() {}
+
+    private ClusteringUtils() {
+    }
 
     public static <S> ClusteringAlgorithm<S> trivialClustering() {
-        return dataset -> {
-            Collection<Collection<S>> trivialMap = new ArrayList<>(1);
-            trivialMap.add(dataset);
-            return trivialMap;
+        return new ClusteringAlgorithm<S>() {
+
+            private Collection<S> dataset;
+
+            @Override
+            public ClusteringAlgorithm<S> fit(Collection<S> dataset) {
+                this.dataset = dataset;
+                return this;
+            }
+
+            @Override
+            public Collection<Collection<S>> getClusters() {
+                return Collections.singleton(this.dataset);
+            }
         };
     }
+
+    public static <S> Map<S, Collection<Integer>> getMultiLabels(Collection<Collection<S>> clusters) {
+        Map<S, Collection<Integer>> labels = new HashMap<>();
+        int labelId = 0;
+        for (Collection<S> cluster : clusters) {
+            for (S point : cluster) {
+                labels.putIfAbsent(point, new HashSet<>());
+                labels.get(point).add(labelId);
+            }
+            labelId += 1;
+        }
+        return labels;
+    }
+
+    public static <S> Map<S, Integer> getLabels(Collection<Collection<S>> clusters) {
+        Map<S, Integer> labels = new HashMap<>();
+        int labelId = 0;
+        for (Collection<S> cluster : clusters) {
+            for (S point : cluster) {
+                labels.put(point, labelId);
+            }
+            labelId += 1;
+        }
+        return labels;
+    }
+
 }

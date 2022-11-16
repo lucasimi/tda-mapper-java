@@ -3,7 +3,6 @@ package org.lucasimi.tda.mapper.pipeline;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.lucasimi.tda.mapper.clustering.ClusteringAlgorithm;
 import org.lucasimi.tda.mapper.cover.CoverAlgorithm;
@@ -25,7 +24,7 @@ public class MapperPipeline<S> {
 
     private Collection<Collection<S>> buildCover(List<S> dataset) {
         long t0 = System.currentTimeMillis();
-        Collection<Collection<S>> cover = this.coverAlgorithm.getClusters(dataset);
+        Collection<Collection<S>> cover = this.coverAlgorithm.fit(dataset).getCover();
         long t1 = System.currentTimeMillis();
         LOGGER.info("Dataset covered in {}ms", t1 - t0);
         return cover;
@@ -33,10 +32,8 @@ public class MapperPipeline<S> {
 
     private Collection<Collection<S>> computeClustering(Collection<Collection<S>> pullbackCover) {
         long t2 = System.currentTimeMillis();
-        Stream<Collection<S>> parallel = pullbackCover.stream().parallel();
-        LOGGER.info("Using parallel computation: {}", parallel.isParallel());
-        Collection<Collection<S>> clusters = parallel
-                .map(this.clusterer::performClustering)
+        Collection<Collection<S>> clusters = pullbackCover.stream()
+                .map(ds -> this.clusterer.fit(ds).getClusters())
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
         long t3 = System.currentTimeMillis();

@@ -4,6 +4,8 @@ import java.util.Collection;
 
 public interface CoverAlgorithm<S> {
 
-    public Collection<Collection<S>> getClusters(Collection<S> dataset);
+    public CoverAlgorithm<S> fit(Collection<S> dataset);
+
+    public Collection<Collection<S>> getCover();
 
 }

@@ -16,51 +16,54 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DBSCANSimple.class);
 
-	private static final double EPS_DEFAULT = 0.5;
+    private static final double EPS_DEFAULT = 0.5;
 
-	private static final int MIN_SAMPLES_DEFAULT = 5;
+    private static final int MIN_SAMPLES_DEFAULT = 5;
 
-	private Metric<T> metric;
+    private Metric<T> metric;
 
-	private double eps;
-	
-	private int minSamples;
+    private double eps;
 
-	private enum PointStatus {
+    private int minSamples;
+
+    private Collection<Collection<T>> clusters = new ArrayList<>();
+
+    private enum PointStatus {
         NOISE,
         CLUSTERED
     }
 
-	public DBSCANSimple(Metric<T> metric) {
-		this(metric, EPS_DEFAULT, MIN_SAMPLES_DEFAULT);
-	}
+    public DBSCANSimple(Metric<T> metric) {
+        this(metric, EPS_DEFAULT, MIN_SAMPLES_DEFAULT);
+    }
 
-	public DBSCANSimple(Metric<T> metric, Double eps) {
-		this(metric, eps, MIN_SAMPLES_DEFAULT);
-	}
+    public DBSCANSimple(Metric<T> metric, Double eps) {
+        this(metric, eps, MIN_SAMPLES_DEFAULT);
+    }
 
-	public DBSCANSimple(Metric<T> metric, Double eps, Integer minSamples) {
-		this.metric = metric;
-		if (eps == null || eps <= 0) {
+    public DBSCANSimple(Metric<T> metric, Double eps, Integer minSamples) {
+        this.metric = metric;
+        if (eps == null || eps <= 0) {
             LOGGER.warn("Found eps = {}, but expected > 0. Using default eps = {}", eps, EPS_DEFAULT);
             this.eps = EPS_DEFAULT;
-		} else {
-			this.eps = eps;
-		}
-		if (minSamples == null || minSamples <= 0) {
-            LOGGER.warn("Found minSamples = {}, but expected > 0. Using default minSamples = {}", minSamples, MIN_SAMPLES_DEFAULT);
+        } else {
+            this.eps = eps;
+        }
+        if (minSamples == null || minSamples <= 0) {
+            LOGGER.warn("Found minSamples = {}, but expected > 0. Using default minSamples = {}", minSamples,
+                    MIN_SAMPLES_DEFAULT);
             this.minSamples = MIN_SAMPLES_DEFAULT;
-		} else {
-			this.minSamples = minSamples;
-		}
-	}
-	
-	private Collection<T> propagateCluster(final Collection<T> cluster,
-                                    final T point,
-                                    final List<T> neighbors,
-                                    final Collection<T> points,
-                                    final Map<T, PointStatus> visited) {
-		cluster.add(point);
+        } else {
+            this.minSamples = minSamples;
+        }
+    }
+
+    private Collection<T> propagateCluster(final Collection<T> cluster,
+            final T point,
+            final List<T> neighbors,
+            final Collection<T> points,
+            final Map<T, PointStatus> visited) {
+        cluster.add(point);
         visited.put(point, PointStatus.CLUSTERED);
 
         List<T> seeds = new ArrayList<T>(neighbors);
@@ -81,19 +84,20 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
             index++;
         }
         return cluster;
-	}
+    }
 
-	private List<T> getNeighbors(Collection<T> data, T point, double eps) {
-		List<T> neighbors = new ArrayList<>(data.size());
-		for (T p : data) {
-			if (this.metric.eval(point, p) < eps) {
-				neighbors.add(p);
-			}
-		}
-		return neighbors;
-	}
+    private List<T> getNeighbors(Collection<T> data, T point, double eps) {
+        List<T> neighbors = new ArrayList<>(data.size());
+        for (T p : data) {
+            if (this.metric.eval(point, p) < eps) {
+                neighbors.add(p);
+            }
+        }
+        return neighbors;
+    }
 
-	public Collection<Collection<T>> performClustering(final Collection<T> points) {
+    @Override
+    public ClusteringAlgorithm<T> fit(final Collection<T> points) {
         final Collection<Collection<T>> clusters = new ArrayList<>();
         final Map<T, PointStatus> visited = new HashMap<T, PointStatus>();
         for (final T point : points) {
@@ -108,10 +112,16 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
                 visited.put(point, PointStatus.NOISE);
             }
         }
-        return clusters;
+        this.clusters = clusters;
+        return this;
     }
 
-	private List<T> merge(final List<T> one, final List<T> two) {
+    @Override
+    public Collection<Collection<T>> getClusters() {
+        return this.clusters;
+    }
+
+    private List<T> merge(final List<T> one, final List<T> two) {
         final Set<T> oneSet = new HashSet<T>(one);
         for (T item : two) {
             if (!oneSet.contains(item)) {
