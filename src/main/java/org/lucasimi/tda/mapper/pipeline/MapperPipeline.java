@@ -22,7 +22,7 @@ public class MapperPipeline<S> {
         this.clusteringAlgorithm = builder.clustering;
     }
 
-    public MapperGraph<S> run(List<S> dataset) {
+    public MapperGraph run(List<S> dataset) {
         long t0 = System.currentTimeMillis();
         Collection<Collection<S>> cover = this.coverAlgorithm.run(dataset);
         long t1 = System.currentTimeMillis();
@@ -31,7 +31,7 @@ public class MapperPipeline<S> {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
         long t2 = System.currentTimeMillis();
-        MapperGraph<S> graph = new MapperGraph<>(dataset, clusters);
+        MapperGraph graph = new MapperGraph(dataset, clusters);
         long t3 = System.currentTimeMillis();
         LOGGER.debug("### Mapper Pipeline build report");
         LOGGER.debug("* total build time:    \t{}ms", t3 - t0);

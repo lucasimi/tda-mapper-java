@@ -6,26 +6,31 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapperGraph<S> {
+public class MapperGraph {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapperGraph.class);
 
     public class Vertex {
 
-        private final Collection<S> points;
+        private int id;
 
-        public Vertex(Collection<S> points) {
+        private final Collection<Integer> points;
+
+        public Vertex(int id, Collection<Integer> points) {
+            this.id = id;
             this.points = points;
         }
 
-        public Collection<S> getPoints() {
+        public int getId() {
+            return this.id;
+        }
+
+        public Collection<Integer> getPoints() {
             return this.points;
         }
 
@@ -33,29 +38,32 @@ public class MapperGraph<S> {
 
     private Map<Vertex, List<Vertex>> graph = new HashMap<>();
 
-    private Map<S, Integer> pointIdMap = new HashMap<>();
-
     public MapperGraph() {
     }
 
-    public MapperGraph(List<S> dataset, Collection<Collection<S>> clusters) {
+    public <S> MapperGraph(List<S> dataset, Collection<Collection<S>> clusters) {
         long t0 = System.currentTimeMillis();
-        this.pointIdMap = new HashMap<>(dataset.size());
+        Map<S, Integer> pointIdMap = new HashMap<>(dataset.size());
         int pointId = 0;
         for (S point : dataset) {
-            this.pointIdMap.put(point, pointId++);
+            pointIdMap.put(point, pointId++);
         }
         Map<S, List<Vertex>> intersectionMap = new HashMap<>();
+        int vertexId = 0;
         for (Collection<S> cluster : clusters) {
-            Vertex vertex = new Vertex(cluster);
+            Vertex vertex = new Vertex(vertexId, new HashSet<>());
             this.graph.put(vertex, new ArrayList<>());
             for (S point : cluster) {
                 intersectionMap.putIfAbsent(point, new ArrayList<>());
                 intersectionMap.get(point).add(vertex);
-                if (!this.pointIdMap.containsKey(point)) {
-                    this.pointIdMap.put(point, pointId++);
+                if (!pointIdMap.containsKey(point)) {
+                    pointIdMap.put(point, pointId);
+                    pointId += 1;
                 }
+                int pointToAddId = pointIdMap.get(point);
+                vertex.getPoints().add(pointToAddId);
             }
+            vertexId += 1;
         }
         long t1 = System.currentTimeMillis();
         for (List<Vertex> intersection : intersectionMap.values()) {
@@ -103,32 +111,8 @@ public class MapperGraph<S> {
         return this.graph.keySet();
     }
 
-    public MapperGraph<Integer> getStructureMap() {
-        MapperGraph<Integer> structureGraph = new MapperGraph<>();
-        structureGraph.pointIdMap = new HashMap<>(this.pointIdMap.size());
-        for (Integer pointId : this.pointIdMap.values()) {
-            structureGraph.pointIdMap.put(pointId, pointId);
-        }
-        Set<Vertex> vertices = this.graph.keySet();
-        Map<Vertex, MapperGraph<Integer>.Vertex> vertexMap = new HashMap<>(vertices.size());
-        for (Vertex vertex : vertices) {
-            Collection<Integer> pointIds = vertex.getPoints().stream()
-                    .map(this.pointIdMap::get)
-                    .collect(Collectors.toList());
-            MapperGraph<Integer>.Vertex structureVertex = structureGraph.new Vertex(pointIds);
-            vertexMap.put(vertex, structureVertex);
-            structureGraph.graph.put(structureVertex, new ArrayList<>());
-        }
-        for (Entry<Vertex, List<Vertex>> entry : this.graph.entrySet()) {
-            Vertex source = entry.getKey();
-            MapperGraph<Integer>.Vertex sSource = vertexMap.get(source);
-            for (Vertex target : entry.getValue()) {
-                MapperGraph<Integer>.Vertex sTarget = vertexMap.get(target);
-                structureGraph.graph.get(sSource).add(sTarget);
-            }
-
-        }
-        return structureGraph;
+    public Map<Vertex, List<Vertex>> getMap() {
+        return this.graph;
     }
 
 }

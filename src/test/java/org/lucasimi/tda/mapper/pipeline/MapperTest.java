@@ -27,7 +27,7 @@ public class MapperTest {
     @Test
     public void testMapperPerf() throws MapperException {
         int dim = 128;
-        int k = 4;
+        int k = 5;
         int size = (int) Math.pow(10, k);
         float side = 1.0f;
         ArrayList<float[]> dataset = DatasetGenerator.randomDataset(size, dim, 0.0f, side);
@@ -52,7 +52,7 @@ public class MapperTest {
                 .withClusteringAlgorithm(clusterer)
                 .build();
 
-        MapperGraph<float[]> graph = mapperPipeline.run(dataset);
+        MapperGraph graph = mapperPipeline.run(dataset);
         assertEquals(3, graph.countConnectedComponents());
     }
 
@@ -73,7 +73,7 @@ public class MapperTest {
                 .withClusteringAlgorithm(clusterer)
                 .build();
 
-        MapperGraph<float[]> graph = mapperPipeline.run(dataset);
+        MapperGraph graph = mapperPipeline.run(dataset);
         assertEquals(6, graph.getVertices().size());
         assertEquals(6, graph.countConnectedComponents());
 
@@ -97,7 +97,7 @@ public class MapperTest {
                 .withClusteringAlgorithm(clusterer)
                 .build();
 
-        MapperGraph<float[]> graph = mapperPipeline.run(dataset);
+        MapperGraph graph = mapperPipeline.run(dataset);
         assertEquals(2, graph.countConnectedComponents());
     }
 
