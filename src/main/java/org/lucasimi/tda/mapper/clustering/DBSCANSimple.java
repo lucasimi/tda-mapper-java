@@ -26,8 +26,6 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
 
     private int minSamples;
 
-    private Collection<Collection<T>> clusters = new ArrayList<>();
-
     private enum PointStatus {
         NOISE,
         CLUSTERED
@@ -50,7 +48,7 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
             this.eps = eps;
         }
         if (minSamples == null || minSamples <= 0) {
-            LOGGER.warn("Found minSamples = {}, but expected > 0. Using default minSamples = {}", minSamples,
+            LOGGER.warn("Found minSamples = %d, but expected > 0. Using default minSamples = %d", minSamples,
                     MIN_SAMPLES_DEFAULT);
             this.minSamples = MIN_SAMPLES_DEFAULT;
         } else {
@@ -96,8 +94,18 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
         return neighbors;
     }
 
+    private List<T> merge(final List<T> one, final List<T> two) {
+        final Set<T> oneSet = new HashSet<T>(one);
+        for (T item : two) {
+            if (!oneSet.contains(item)) {
+                one.add(item);
+            }
+        }
+        return one;
+    }
+
     @Override
-    public ClusteringAlgorithm<T> fit(final Collection<T> points) {
+    public Collection<Collection<T>> run(final Collection<T> points) {
         final Collection<Collection<T>> clusters = new ArrayList<>();
         final Map<T, PointStatus> visited = new HashMap<T, PointStatus>();
         for (final T point : points) {
@@ -112,23 +120,7 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
                 visited.put(point, PointStatus.NOISE);
             }
         }
-        this.clusters = clusters;
-        return this;
-    }
-
-    @Override
-    public Collection<Collection<T>> getClusters() {
-        return this.clusters;
-    }
-
-    private List<T> merge(final List<T> one, final List<T> two) {
-        final Set<T> oneSet = new HashSet<T>(one);
-        for (T item : two) {
-            if (!oneSet.contains(item)) {
-                one.add(item);
-            }
-        }
-        return one;
+        return clusters;
     }
 
 }

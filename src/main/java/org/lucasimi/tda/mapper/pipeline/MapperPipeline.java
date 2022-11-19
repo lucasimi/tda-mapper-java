@@ -13,56 +13,46 @@ public class MapperPipeline<S> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapperPipeline.class);
 
-    private ClusteringAlgorithm<S> clusterer;
-
     private CoverAlgorithm<S> coverAlgorithm;
 
+    private ClusteringAlgorithm<S> clusteringAlgorithm;
+
     private MapperPipeline(Builder<S> builder) {
-        this.clusterer = builder.clustering;
-        this.coverAlgorithm = builder.coverAlgorithm;
-    }
-
-    private Collection<Collection<S>> buildCover(List<S> dataset) {
-        long t0 = System.currentTimeMillis();
-        Collection<Collection<S>> cover = this.coverAlgorithm.fit(dataset).getCover();
-        long t1 = System.currentTimeMillis();
-        LOGGER.info("Dataset covered in {}ms", t1 - t0);
-        return cover;
-    }
-
-    private Collection<Collection<S>> computeClustering(Collection<Collection<S>> pullbackCover) {
-        long t2 = System.currentTimeMillis();
-        Collection<Collection<S>> clusters = pullbackCover.stream()
-                .map(ds -> this.clusterer.fit(ds).getClusters())
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-        long t3 = System.currentTimeMillis();
-        LOGGER.info("Clustering computed in {}ms", t3 - t2);
-        return clusters;
+        this.coverAlgorithm = builder.cover;
+        this.clusteringAlgorithm = builder.clustering;
     }
 
     public MapperGraph<S> run(List<S> dataset) {
         long t0 = System.currentTimeMillis();
-        Collection<Collection<S>> cover = buildCover(dataset);
-        Collection<Collection<S>> clusters = computeClustering(cover);
-        MapperGraph<S> graph = new MapperGraph<>(clusters);
+        Collection<Collection<S>> cover = this.coverAlgorithm.run(dataset);
         long t1 = System.currentTimeMillis();
-        LOGGER.info("Mapper Graph built in {}ms", t1 - t0);
+        Collection<Collection<S>> clusters = cover.parallelStream()
+                .map(this.clusteringAlgorithm::run)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        long t2 = System.currentTimeMillis();
+        MapperGraph<S> graph = new MapperGraph<>(dataset, clusters);
+        long t3 = System.currentTimeMillis();
+        LOGGER.debug("### Mapper Pipeline build report");
+        LOGGER.debug("* total build time:    \t{}ms", t3 - t0);
+        LOGGER.debug("* cover build time:    \t{}ms", t1 - t0);
+        LOGGER.debug("* clusters build time: \t{}ms", t2 - t1);
+        LOGGER.debug("* graph build time:    \t{}ms", t3 - t2);
         return graph;
     }
 
     public static class Builder<S> {
 
-        private CoverAlgorithm<S> coverAlgorithm;
+        private CoverAlgorithm<S> cover;
 
         private ClusteringAlgorithm<S> clustering;
 
-        public Builder<S> withCover(CoverAlgorithm<S> coveringAlgo) {
-            this.coverAlgorithm = coveringAlgo;
+        public Builder<S> withCoverAlgorithm(CoverAlgorithm<S> cover) {
+            this.cover = cover;
             return this;
         }
 
-        public Builder<S> withClustering(ClusteringAlgorithm<S> clustering) {
+        public Builder<S> withClusteringAlgorithm(ClusteringAlgorithm<S> clustering) {
             this.clustering = clustering;
             return this;
         }
@@ -70,7 +60,7 @@ public class MapperPipeline<S> {
         public MapperPipeline<S> build() throws MapperException {
             if (this.clustering == null) {
                 throw new MapperException.NoClusteringAlgorithm();
-            } else if (this.coverAlgorithm == null) {
+            } else if (this.cover == null) {
                 throw new MapperException.NoCoverAlgorithm();
             } else {
                 return new MapperPipeline<>(this);

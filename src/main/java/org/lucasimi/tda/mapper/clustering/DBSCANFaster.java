@@ -27,8 +27,6 @@ public class DBSCANFaster<T> implements ClusteringAlgorithm<T> {
 
     private int minSamples;
 
-    private Collection<Collection<T>> clusters = new ArrayList<>();
-
     private enum PointStatus {
         NOISE,
         CLUSTERED
@@ -90,8 +88,17 @@ public class DBSCANFaster<T> implements ClusteringAlgorithm<T> {
         return vpTree.ballSearch(point, eps);
     }
 
+    private void merge(final Collection<T> one, final Collection<T> two) {
+        final Set<T> oneSet = new HashSet<>(one);
+        for (T item : two) {
+            if (!oneSet.contains(item)) {
+                one.add(item);
+            }
+        }
+    }
+
     @Override
-    public ClusteringAlgorithm<T> fit(final Collection<T> points) {
+    public Collection<Collection<T>> run(final Collection<T> points) {
         VPTree<T> vpTree = new VPTree.Builder<T>()
                 .withMetric(metric)
                 .withLeafCapacity(minSamples)
@@ -110,22 +117,7 @@ public class DBSCANFaster<T> implements ClusteringAlgorithm<T> {
                 visited.put(point, PointStatus.NOISE);
             }
         }
-        this.clusters = clusters;
-        return this;
-    }
-
-    @Override
-    public Collection<Collection<T>> getClusters() {
-        return this.clusters;
-    }
-
-    private void merge(final Collection<T> one, final Collection<T> two) {
-        final Set<T> oneSet = new HashSet<>(one);
-        for (T item : two) {
-            if (!oneSet.contains(item)) {
-                one.add(item);
-            }
-        }
+        return clusters;
     }
 
 }

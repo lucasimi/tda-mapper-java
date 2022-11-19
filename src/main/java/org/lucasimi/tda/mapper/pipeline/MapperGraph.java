@@ -1,11 +1,11 @@
 package org.lucasimi.tda.mapper.pipeline;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -15,48 +15,40 @@ public class MapperGraph<S> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapperGraph.class);
 
-    private Map<Vertex, Map<Vertex, Edge>> graph = new HashMap<>();
+    private Map<Vertex, Set<Vertex>> graph = new HashMap<>();
 
-    public MapperGraph(Collection<Collection<S>> clusters) {
+    public MapperGraph(List<S> dataset, Collection<Collection<S>> clusters) {
         long t0 = System.currentTimeMillis();
-        Map<S, Collection<Vertex>> vertexMap = buildVertexMap(clusters);
-        addEdges(vertexMap);
-        long t1 = System.currentTimeMillis();
-        LOGGER.info("Graph computed in {}ms", t1 - t0);
-    }
-
-    private Map<S, Collection<Vertex>> buildVertexMap(Collection<Collection<S>> clusters) {
-        Map<S, Collection<Vertex>> vertexMap = new HashMap<>();
-        for (Collection<S> cluster : clusters) {
-            if (!cluster.isEmpty()) {
-                Vertex vertex = new Vertex(cluster);
-                this.graph.put(vertex, new HashMap<>());
-                for (S data : cluster) {
-                    vertexMap.computeIfAbsent(data, x -> new LinkedList<>());
-                    vertexMap.get(data).add(vertex);
-                }
-            }
+        Map<S, List<Vertex>> intersections = new HashMap<>(dataset.size());
+        for (S point : dataset) {
+            intersections.put(point, new ArrayList<>());
         }
-        return vertexMap;
-    }
-
-    private void addEdges(Map<S, Collection<Vertex>> vertexMap) {
-        for (Entry<S, Collection<Vertex>> entry : vertexMap.entrySet()) {
-            for (Vertex source : entry.getValue()) {
-                for (Vertex target : entry.getValue()) {
-                    if (!source.equals(target)) {
-                        if (this.graph.get(source).get(target) == null) {
-                            Edge edge = new Edge();
-                            this.graph.get(source).put(target, edge);
-                        }
+        for (Collection<S> cluster : clusters) {
+            Vertex vertex = new Vertex(cluster);
+            for (S point : cluster) {
+                intersections.get(point).add(vertex);
+            }
+            this.graph.put(vertex, new HashSet<>());
+        }
+        long t1 = System.currentTimeMillis();
+        for (List<Vertex> vertices : intersections.values()) {
+            int vertexNum = vertices.size();
+            for (int sourceId = 0; sourceId < vertexNum; sourceId++) {
+                Vertex source = vertices.get(sourceId);
+                for (int targetId = sourceId + 1; targetId < vertexNum; targetId++) {
+                    Vertex target = vertices.get(targetId);
+                    if (!this.graph.get(source).contains(target)) {
+                        this.graph.get(source).add(target);
+                        this.graph.get(target).add(source);
                     }
                 }
             }
         }
-    }
-
-    public Map<Vertex, Edge> getAdjaciency(Vertex source) {
-        return this.graph.get(source);
+        long t2 = System.currentTimeMillis();
+        LOGGER.debug("### Mapper Graph build report");
+        LOGGER.debug("* total build time:    \t{}ms", t2 - t0);
+        LOGGER.debug("* vertices build time: \t{}ms", t1 - t0);
+        LOGGER.debug("* edges build time:    \t{}ms", t2 - t1);
     }
 
     public int countConnectedComponents() {
@@ -73,8 +65,8 @@ public class MapperGraph<S> {
     }
 
     private void visitConnectedComponent(Vertex source, Set<Vertex> visited) {
-        Map<Vertex, Edge> adjacient = this.graph.get(source);
-        for (Vertex target : adjacient.keySet()) {
+        Set<Vertex> adjacient = this.graph.get(source);
+        for (Vertex target : adjacient) {
             if (!visited.contains(target)) {
                 visited.add(target);
                 visitConnectedComponent(target, visited);
@@ -96,19 +88,6 @@ public class MapperGraph<S> {
 
         public Collection<S> getPoints() {
             return this.points;
-        }
-
-    }
-
-    public class Edge {
-
-        private double union;
-
-        private double intersection;
-
-        public Edge() {
-            this.union = 0;
-            this.intersection = 0;
         }
 
     }

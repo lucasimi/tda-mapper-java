@@ -25,11 +25,11 @@ public class KNNSearch<S> implements SearchAlgorithm<S> {
     }
 
     @Override
-    public Collection<S> setup(Collection<S> dataset) {
-		this.vpTree = new VPTree.Builder<S>()
-            .withMetric(this.metric)
-            .withLeafCapacity(this.neighbors)
-            .build(dataset);
+    public Collection<S> fit(Collection<S> dataset) {
+        this.vpTree = new VPTree.Builder<S>()
+                .withMetric(this.metric)
+                .withLeafCapacity(this.neighbors)
+                .build(dataset);
         return this.vpTree.getCenters();
     }
 

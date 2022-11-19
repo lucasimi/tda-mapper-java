@@ -26,11 +26,11 @@ public class KNNCoverTest {
         dataset.add(new float[] { 1.0f, 0.0f });
 
         CoverAlgorithm<float[]> covering = new SearchCover<>(new KNNSearch<>(lens, metric, 3));
-        Collection<Collection<float[]>> groups = covering.fit(dataset).getCover();
+        Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(1, groups.size());
 
         covering = new SearchCover<>(new KNNSearch<>(lens, metric, 1));
-        groups = covering.fit(dataset).getCover();
+        groups = covering.run(dataset);
         Assertions.assertEquals(3, groups.size());
     }
 
@@ -47,11 +47,11 @@ public class KNNCoverTest {
         dataset.add(new float[] { 0.0f, -1.2f });
 
         CoverAlgorithm<float[]> covering = new SearchCover<>(new KNNSearch<>(lens, metric, 3));
-        Collection<Collection<float[]>> groups = covering.fit(dataset).getCover();
+        Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(2, groups.size());
 
         covering = new SearchCover<>(new KNNSearch<>(lens, metric, 1));
-        groups = covering.fit(dataset).getCover();
+        groups = covering.run(dataset);
         Assertions.assertEquals(6, groups.size());
     }
 
@@ -61,7 +61,7 @@ public class KNNCoverTest {
         dataset.addAll(DatasetGenerator.randomDataset(2000, 2, new float[] { 1.0f, 0.0f }, 0.1f));
         dataset.addAll(DatasetGenerator.randomDataset(2000, 2, new float[] { 0.0f, 1.0f }, 0.1f));
         CoverAlgorithm<float[]> covering = new SearchCover<>(new KNNSearch<>(lens, metric, 2000));
-        Collection<Collection<float[]>> groups = covering.fit(dataset).getCover();
+        Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(2, groups.size());
     }
 

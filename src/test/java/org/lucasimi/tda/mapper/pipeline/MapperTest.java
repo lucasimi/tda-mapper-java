@@ -1,10 +1,11 @@
 package org.lucasimi.tda.mapper.pipeline;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.lucasimi.tda.mapper.DatasetGenerator;
 import org.lucasimi.tda.mapper.clustering.ClusteringAlgorithm;
@@ -14,12 +15,8 @@ import org.lucasimi.tda.mapper.cover.SearchCover;
 import org.lucasimi.tda.mapper.topology.Lens;
 import org.lucasimi.tda.mapper.topology.TopologyUtils;
 import org.lucasimi.utils.Metric;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MapperTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MapperTest.class);
 
     ClusteringAlgorithm<float[]> clusterer = ClusteringUtils.trivialClustering();
 
@@ -30,27 +27,17 @@ public class MapperTest {
     @Test
     public void testMapperPerf() throws MapperException {
         int dim = 128;
-        int k = 5;
+        int k = 4;
         int size = (int) Math.pow(10, k);
         float side = 1.0f;
-        long t0 = System.currentTimeMillis();
         ArrayList<float[]> dataset = DatasetGenerator.randomDataset(size, dim, 0.0f, side);
-        long t1 = System.currentTimeMillis();
         float radius = (float) (side * Math.sqrt(dim) / Math.pow(size, 1.0 / dim));
-        LOGGER.info("Dataset created in {}ms", t1 - t0);
-        long startTime = System.currentTimeMillis();
-
         MapperPipeline<float[]> mapperPipeline = new MapperPipeline.Builder<float[]>()
-                .withCover(new SearchCover<>(new BallSearch<>(lens, metric, radius * 0.4)))
-                .withClustering(clusterer)
+                .withCoverAlgorithm(new SearchCover<>(new BallSearch<>(lens, metric, radius * 0.4)))
+                .withClusteringAlgorithm(clusterer)
                 .build();
 
-        MapperGraph<float[]> mapperGraph = mapperPipeline.run(dataset);
-        long endTime = System.currentTimeMillis();
-        LOGGER.info("Mapper computed in {}ms", endTime - startTime);
-        int vertNum = mapperGraph.getVertices().size();
-        int ccNum = mapperGraph.countConnectedComponents();
-        LOGGER.info("Mapper graph has {} vertices and {} connected components", vertNum, ccNum);
+        mapperPipeline.run(dataset);
     }
 
     @Test
@@ -61,12 +48,12 @@ public class MapperTest {
         dataset.add(new float[] { 1.0f, 0.0f });
 
         MapperPipeline<float[]> mapperPipeline = new MapperPipeline.Builder<float[]>()
-                .withCover(new SearchCover<>(new BallSearch<>(lens, metric, 0.5)))
-                .withClustering(clusterer)
+                .withCoverAlgorithm(new SearchCover<>(new BallSearch<>(lens, metric, 0.5)))
+                .withClusteringAlgorithm(clusterer)
                 .build();
 
         MapperGraph<float[]> graph = mapperPipeline.run(dataset);
-        Assertions.assertEquals(3, graph.countConnectedComponents());
+        assertEquals(3, graph.countConnectedComponents());
     }
 
     @Test
@@ -82,21 +69,21 @@ public class MapperTest {
         dataset.add(new float[] { 0.0f, -1.2f });
 
         MapperPipeline<float[]> mapperPipeline = new MapperPipeline.Builder<float[]>()
-                .withCover(new SearchCover<>(new BallSearch<>(lens, metric, 0.09)))
-                .withClustering(clusterer)
+                .withCoverAlgorithm(new SearchCover<>(new BallSearch<>(lens, metric, 0.09)))
+                .withClusteringAlgorithm(clusterer)
                 .build();
 
         MapperGraph<float[]> graph = mapperPipeline.run(dataset);
-        Assertions.assertEquals(6, graph.getVertices().size());
-        Assertions.assertEquals(6, graph.countConnectedComponents());
+        assertEquals(6, graph.getVertices().size());
+        assertEquals(6, graph.countConnectedComponents());
 
         mapperPipeline = new MapperPipeline.Builder<float[]>()
-                .withCover(new SearchCover<>(new BallSearch<>(lens, metric, 0.15)))
-                .withClustering(clusterer)
+                .withCoverAlgorithm(new SearchCover<>(new BallSearch<>(lens, metric, 0.15)))
+                .withClusteringAlgorithm(clusterer)
                 .build();
 
         graph = mapperPipeline.run(dataset);
-        Assertions.assertEquals(2, graph.countConnectedComponents());
+        assertEquals(2, graph.countConnectedComponents());
     }
 
     @Test
@@ -106,12 +93,12 @@ public class MapperTest {
         dataset.addAll(DatasetGenerator.randomDataset(20000, 2, new float[] { 0.0f, 1.0f }, 0.3f));
 
         MapperPipeline<float[]> mapperPipeline = new MapperPipeline.Builder<float[]>()
-                .withCover(new SearchCover<>(new BallSearch<>(lens, metric, 0.5)))
-                .withClustering(clusterer)
+                .withCoverAlgorithm(new SearchCover<>(new BallSearch<>(lens, metric, 0.5)))
+                .withClusteringAlgorithm(clusterer)
                 .build();
 
         MapperGraph<float[]> graph = mapperPipeline.run(dataset);
-        Assertions.assertEquals(2, graph.countConnectedComponents());
+        assertEquals(2, graph.countConnectedComponents());
     }
 
 }

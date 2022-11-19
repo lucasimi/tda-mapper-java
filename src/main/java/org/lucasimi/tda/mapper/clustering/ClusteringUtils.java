@@ -13,18 +13,9 @@ public class ClusteringUtils {
 
     public static <S> ClusteringAlgorithm<S> trivialClustering() {
         return new ClusteringAlgorithm<S>() {
-
-            private Collection<S> dataset;
-
             @Override
-            public ClusteringAlgorithm<S> fit(Collection<S> dataset) {
-                this.dataset = dataset;
-                return this;
-            }
-
-            @Override
-            public Collection<Collection<S>> getClusters() {
-                return Collections.singleton(this.dataset);
+            public Collection<Collection<S>> run(Collection<S> dataset) {
+                return Collections.singleton(dataset);
             }
         };
     }

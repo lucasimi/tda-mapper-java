@@ -31,17 +31,17 @@ public class BallSearch<S> implements SearchAlgorithm<S> {
     }
 
     @Override
-    public Collection<S> setup(Collection<S> dataset) {
+    public Collection<S> fit(Collection<S> dataset) {
         int leafSize = (int) (DEFAULT_LEAF_SIZE_FACTOR * dataset.size());
         if (leafSize <= 0) {
             leafSize = 1;
         }
-        LOGGER.info("Using leaf size of {}", leafSize);
+        LOGGER.debug("Using leaf size of {}", leafSize);
         this.vpTree = new VPTree.Builder<S>()
-            .withMetric(this.metric)
-            .withLeafCapacity(leafSize)
-            .withLeafRadius(this.radius)
-            .build(dataset);
+                .withMetric(this.metric)
+                .withLeafCapacity(leafSize)
+                .withLeafRadius(this.radius)
+                .build(dataset);
         return this.vpTree.getCenters();
     }
 

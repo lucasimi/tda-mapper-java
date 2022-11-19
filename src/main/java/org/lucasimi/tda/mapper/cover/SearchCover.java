@@ -3,21 +3,18 @@ package org.lucasimi.tda.mapper.cover;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 public class SearchCover<S> implements CoverAlgorithm<S> {
 
     private SearchAlgorithm<S> searchAlgorithm;
-
-    private Collection<Collection<S>> clusters = new LinkedList<>();
 
     public <T> SearchCover(SearchAlgorithm<S> searchAlgorithm) {
         this.searchAlgorithm = searchAlgorithm;
     }
 
     @Override
-    public CoverAlgorithm<S> fit(Collection<S> dataset) {
-        Collection<S> centers = this.searchAlgorithm.setup(dataset);
+    public Collection<Collection<S>> run(Collection<S> dataset) {
+        Collection<S> centers = this.searchAlgorithm.fit(dataset);
         Collection<Collection<S>> clusters = new ArrayList<>(dataset.size());
         HashMap<S, Boolean> coverMap = new HashMap<>(dataset.size());
         for (S point : dataset) {
@@ -34,13 +31,7 @@ public class SearchCover<S> implements CoverAlgorithm<S> {
                 }
             }
         }
-        this.clusters = clusters;
-        return this;
-    }
-
-    @Override
-    public Collection<Collection<S>> getCover() {
-        return this.clusters;
+        return clusters;
     }
 
 }
