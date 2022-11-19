@@ -84,6 +84,21 @@ public class MapperGraph {
         LOGGER.debug("* edges build time:    \t{}ms", t2 - t1);
     }
 
+    public Map<Integer, Set<Vertex>> getConnectedComponents() {
+        Map<Integer, Set<Vertex>> components = new HashMap<>();
+        Set<Vertex> visited = new HashSet<>();
+        int componentId = 0;
+        for (Vertex source : this.graph.keySet()) {
+            if (!visited.contains(source)) {
+                Set<Vertex> component = new HashSet<>();
+                components.put(componentId, component);
+                componentId += 1;
+                visitConnectedComponent(source, visited, component);
+            }
+        }
+        return components;
+    }
+
     public int countConnectedComponents() {
         Set<Vertex> visited = new HashSet<>();
         int connectedComponents = 0;
@@ -103,6 +118,17 @@ public class MapperGraph {
             if (!visited.contains(target)) {
                 visited.add(target);
                 visitConnectedComponent(target, visited);
+            }
+        }
+    }
+
+    private void visitConnectedComponent(Vertex source, Set<Vertex> visited, Set<Vertex> component) {
+        visited.add(source);
+        component.add(source);
+        List<Vertex> adjacient = this.graph.get(source);
+        for (Vertex target : adjacient) {
+            if (!visited.contains(target)) {
+                visitConnectedComponent(target, visited, component);
             }
         }
     }
