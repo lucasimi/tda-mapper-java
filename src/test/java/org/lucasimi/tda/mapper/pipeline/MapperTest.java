@@ -33,8 +33,11 @@ public class MapperTest {
         ArrayList<float[]> dataset = DatasetGenerator.randomDataset(size, dim, 0.0f, side);
         float radius = (float) (side * Math.sqrt(dim) / Math.pow(size, 1.0 / dim));
         MapperPipeline<float[]> mapperPipeline = new MapperPipeline.Builder<float[]>()
-                .withCoverAlgorithm(new SearchCover<>(new BallSearch<>(lens, metric, radius * 0.4)))
-                .withClusteringAlgorithm(clusterer)
+                .withCoverAlgorithm(new SearchCover.Builder<float[]>()
+                        .withSearchAlgorithm(new BallSearch.Builder<float[]>()
+                                .withMetric(TopologyUtils.pullback(lens, metric))
+                                .withRadius(radius * 0.4)))
+                .withClusteringAlgorithm(ClusteringUtils.trivialClusteringBuilder())
                 .build();
 
         mapperPipeline.run(dataset);
@@ -48,8 +51,11 @@ public class MapperTest {
         dataset.add(new float[] { 1.0f, 0.0f });
 
         MapperPipeline<float[]> mapperPipeline = new MapperPipeline.Builder<float[]>()
-                .withCoverAlgorithm(new SearchCover<>(new BallSearch<>(lens, metric, 0.5)))
-                .withClusteringAlgorithm(clusterer)
+                .withCoverAlgorithm(new SearchCover.Builder<float[]>()
+                        .withSearchAlgorithm(new BallSearch.Builder<float[]>()
+                                .withMetric(TopologyUtils.pullback(lens, metric))
+                                .withRadius(0.5)))
+                .withClusteringAlgorithm(ClusteringUtils.trivialClusteringBuilder())
                 .build();
 
         MapperGraph graph = mapperPipeline.run(dataset);
@@ -69,8 +75,11 @@ public class MapperTest {
         dataset.add(new float[] { 0.0f, -1.2f });
 
         MapperPipeline<float[]> mapperPipeline = new MapperPipeline.Builder<float[]>()
-                .withCoverAlgorithm(new SearchCover<>(new BallSearch<>(lens, metric, 0.09)))
-                .withClusteringAlgorithm(clusterer)
+                .withCoverAlgorithm(new SearchCover.Builder<float[]>()
+                        .withSearchAlgorithm(new BallSearch.Builder<float[]>()
+                                .withMetric(TopologyUtils.pullback(lens, metric))
+                                .withRadius(0.09)))
+                .withClusteringAlgorithm(ClusteringUtils.trivialClusteringBuilder())
                 .build();
 
         MapperGraph graph = mapperPipeline.run(dataset);
@@ -78,8 +87,11 @@ public class MapperTest {
         assertEquals(6, graph.countConnectedComponents());
 
         mapperPipeline = new MapperPipeline.Builder<float[]>()
-                .withCoverAlgorithm(new SearchCover<>(new BallSearch<>(lens, metric, 0.15)))
-                .withClusteringAlgorithm(clusterer)
+                .withCoverAlgorithm(new SearchCover.Builder<float[]>()
+                        .withSearchAlgorithm(new BallSearch.Builder<float[]>()
+                                .withMetric(TopologyUtils.pullback(lens, metric))
+                                .withRadius(0.15)))
+                .withClusteringAlgorithm(ClusteringUtils.trivialClusteringBuilder())
                 .build();
 
         graph = mapperPipeline.run(dataset);
@@ -93,8 +105,11 @@ public class MapperTest {
         dataset.addAll(DatasetGenerator.randomDataset(20000, 2, new float[] { 0.0f, 1.0f }, 0.3f));
 
         MapperPipeline<float[]> mapperPipeline = new MapperPipeline.Builder<float[]>()
-                .withCoverAlgorithm(new SearchCover<>(new BallSearch<>(lens, metric, 0.5)))
-                .withClusteringAlgorithm(clusterer)
+                .withCoverAlgorithm(new SearchCover.Builder<float[]>()
+                        .withSearchAlgorithm(new BallSearch.Builder<float[]>()
+                                .withMetric(TopologyUtils.pullback(lens, metric))
+                                .withRadius(0.5)))
+                .withClusteringAlgorithm(ClusteringUtils.trivialClusteringBuilder())
                 .build();
 
         MapperGraph graph = mapperPipeline.run(dataset);

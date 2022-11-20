@@ -25,11 +25,19 @@ public class KNNCoverTest {
         dataset.add(new float[] { 1.0f, 1.0f });
         dataset.add(new float[] { 1.0f, 0.0f });
 
-        CoverAlgorithm<float[]> covering = new SearchCover<>(new KNNSearch<>(lens, metric, 3));
+        SearchAlgorithm<float[]> knnSearch1 = new KNNSearch.Builder<float[]>()
+                .withMetric(TopologyUtils.pullback(lens, metric))
+                .withNeighbors(3)
+                .build();
+        CoverAlgorithm<float[]> covering = new SearchCover<>(knnSearch1);
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(1, groups.size());
 
-        covering = new SearchCover<>(new KNNSearch<>(lens, metric, 1));
+        SearchAlgorithm<float[]> knnSearch2 = new KNNSearch.Builder<float[]>()
+                .withMetric(TopologyUtils.pullback(lens, metric))
+                .withNeighbors(1)
+                .build();
+        covering = new SearchCover<>(knnSearch2);
         groups = covering.run(dataset);
         Assertions.assertEquals(3, groups.size());
     }
@@ -46,11 +54,19 @@ public class KNNCoverTest {
         dataset.add(new float[] { 0.0f, -1.1f });
         dataset.add(new float[] { 0.0f, -1.2f });
 
-        CoverAlgorithm<float[]> covering = new SearchCover<>(new KNNSearch<>(lens, metric, 3));
+        SearchAlgorithm<float[]> knnSearch1 = new KNNSearch.Builder<float[]>()
+                .withMetric(TopologyUtils.pullback(lens, metric))
+                .withNeighbors(3)
+                .build();
+        CoverAlgorithm<float[]> covering = new SearchCover<>(knnSearch1);
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(2, groups.size());
 
-        covering = new SearchCover<>(new KNNSearch<>(lens, metric, 1));
+        SearchAlgorithm<float[]> knnSearch2 = new KNNSearch.Builder<float[]>()
+                .withMetric(TopologyUtils.pullback(lens, metric))
+                .withNeighbors(1)
+                .build();
+        covering = new SearchCover<>(knnSearch2);
         groups = covering.run(dataset);
         Assertions.assertEquals(6, groups.size());
     }
@@ -60,7 +76,11 @@ public class KNNCoverTest {
         ArrayList<float[]> dataset = new ArrayList<>();
         dataset.addAll(DatasetGenerator.randomDataset(2000, 2, new float[] { 1.0f, 0.0f }, 0.1f));
         dataset.addAll(DatasetGenerator.randomDataset(2000, 2, new float[] { 0.0f, 1.0f }, 0.1f));
-        CoverAlgorithm<float[]> covering = new SearchCover<>(new KNNSearch<>(lens, metric, 2000));
+        SearchAlgorithm<float[]> knnSearch = new KNNSearch.Builder<float[]>()
+                .withMetric(TopologyUtils.pullback(lens, metric))
+                .withNeighbors(2000)
+                .build();
+        CoverAlgorithm<float[]> covering = new SearchCover<>(knnSearch);
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(2, groups.size());
     }

@@ -36,7 +36,7 @@ public class MapperGraph {
 
     }
 
-    private Map<Vertex, List<Vertex>> graph = new HashMap<>();
+    private Map<Vertex, Set<Vertex>> graph = new HashMap<>();
 
     public MapperGraph() {
     }
@@ -46,19 +46,23 @@ public class MapperGraph {
         Map<S, Integer> pointIdMap = new HashMap<>(dataset.size());
         int pointId = 0;
         for (S point : dataset) {
-            pointIdMap.put(point, pointId++);
+            pointIdMap.put(point, pointId);
+            pointId += 1;
         }
         Map<S, List<Vertex>> intersectionMap = new HashMap<>();
         int vertexId = 0;
+        int extraCount = 0;
         for (Collection<S> cluster : clusters) {
             Vertex vertex = new Vertex(vertexId, new HashSet<>());
-            this.graph.put(vertex, new ArrayList<>());
+            this.graph.put(vertex, new HashSet<>());
             for (S point : cluster) {
                 intersectionMap.putIfAbsent(point, new ArrayList<>());
                 intersectionMap.get(point).add(vertex);
                 if (!pointIdMap.containsKey(point)) {
                     pointIdMap.put(point, pointId);
                     pointId += 1;
+                    extraCount += 1;
+                    LOGGER.warn("Found extra point {} inside clusters", extraCount);
                 }
                 int pointToAddId = pointIdMap.get(point);
                 vertex.getPoints().add(pointToAddId);
@@ -72,8 +76,14 @@ public class MapperGraph {
                 Vertex source = intersection.get(sId);
                 for (int tId = sId + 1; tId < vertNum; tId++) {
                     Vertex target = intersection.get(tId);
-                    this.graph.get(source).add(target);
-                    this.graph.get(target).add(source);
+                    Set<Vertex> sourceAdjaciency = this.graph.get(source);
+                    if (!sourceAdjaciency.contains(target)) {
+                        sourceAdjaciency.add(target);
+                    }
+                    Set<Vertex> targetAdjaciency = this.graph.get(target);
+                    if (!targetAdjaciency.contains(source)) {
+                        targetAdjaciency.add(source);
+                    }
                 }
             }
         }
@@ -113,7 +123,7 @@ public class MapperGraph {
     }
 
     private void visitConnectedComponent(Vertex source, Set<Vertex> visited) {
-        List<Vertex> adjacient = this.graph.get(source);
+        Set<Vertex> adjacient = this.graph.get(source);
         for (Vertex target : adjacient) {
             if (!visited.contains(target)) {
                 visited.add(target);
@@ -125,7 +135,7 @@ public class MapperGraph {
     private void visitConnectedComponent(Vertex source, Set<Vertex> visited, Set<Vertex> component) {
         visited.add(source);
         component.add(source);
-        List<Vertex> adjacient = this.graph.get(source);
+        Set<Vertex> adjacient = this.graph.get(source);
         for (Vertex target : adjacient) {
             if (!visited.contains(target)) {
                 visitConnectedComponent(target, visited, component);
@@ -137,7 +147,7 @@ public class MapperGraph {
         return this.graph.keySet();
     }
 
-    public Map<Vertex, List<Vertex>> getMap() {
+    public Map<Vertex, Set<Vertex>> getMap() {
         return this.graph;
     }
 

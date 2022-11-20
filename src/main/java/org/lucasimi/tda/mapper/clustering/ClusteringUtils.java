@@ -20,6 +20,15 @@ public class ClusteringUtils {
         };
     }
 
+    public static <S> ClusteringAlgorithm.Builder<S> trivialClusteringBuilder() {
+        return new ClusteringAlgorithm.Builder<S>() {
+            @Override
+            public ClusteringAlgorithm<S> build() {
+                return trivialClustering();
+            }
+        };
+    }
+
     public static <S> Map<S, Collection<Integer>> getMultiLabels(Collection<Collection<S>> clusters) {
         Map<S, Collection<Integer>> labels = new HashMap<>();
         int labelId = 0;

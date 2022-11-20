@@ -13,21 +13,23 @@ public class MapperPipeline<S> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapperPipeline.class);
 
-    private CoverAlgorithm<S> coverAlgorithm;
+    private CoverAlgorithm.Builder<S> coverBuilder;
 
-    private ClusteringAlgorithm<S> clusteringAlgorithm;
+    private ClusteringAlgorithm.Builder<S> clusteringBuilder;
 
     private MapperPipeline(Builder<S> builder) {
-        this.coverAlgorithm = builder.cover;
-        this.clusteringAlgorithm = builder.clustering;
+        this.coverBuilder = builder.coverBuilder;
+        this.clusteringBuilder = builder.clusteringBuilder;
     }
 
     public MapperGraph run(List<S> dataset) {
         long t0 = System.currentTimeMillis();
-        Collection<Collection<S>> cover = this.coverAlgorithm.run(dataset);
+        Collection<Collection<S>> cover = this.coverBuilder
+                .build()
+                .run(dataset);
         long t1 = System.currentTimeMillis();
         Collection<Collection<S>> clusters = cover.parallelStream()
-                .map(this.clusteringAlgorithm::run)
+                .map(ds -> this.clusteringBuilder.build().run(ds))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
         long t2 = System.currentTimeMillis();
@@ -43,28 +45,28 @@ public class MapperPipeline<S> {
 
     public static class Builder<S> {
 
-        private CoverAlgorithm<S> cover;
+        private CoverAlgorithm.Builder<S> coverBuilder;
 
-        private ClusteringAlgorithm<S> clustering;
+        private ClusteringAlgorithm.Builder<S> clusteringBuilder;
 
-        public Builder<S> withCoverAlgorithm(CoverAlgorithm<S> cover) {
-            this.cover = cover;
+        public Builder<S> withCoverAlgorithm(CoverAlgorithm.Builder<S> coverBuilder) {
+            this.coverBuilder = coverBuilder;
             return this;
         }
 
-        public Builder<S> withClusteringAlgorithm(ClusteringAlgorithm<S> clustering) {
-            this.clustering = clustering;
+        public Builder<S> withClusteringAlgorithm(ClusteringAlgorithm.Builder<S> clusteringBuilder) {
+            this.clusteringBuilder = clusteringBuilder;
             return this;
         }
 
         public MapperPipeline<S> build() throws MapperException {
-            if (this.clustering == null) {
+            if (this.clusteringBuilder == null) {
                 throw new MapperException.NoClusteringAlgorithm();
-            } else if (this.cover == null) {
-                throw new MapperException.NoCoverAlgorithm();
-            } else {
-                return new MapperPipeline<>(this);
             }
+            if (this.coverBuilder == null) {
+                throw new MapperException.NoCoverAlgorithm();
+            }
+            return new MapperPipeline<>(this);
         }
 
     }

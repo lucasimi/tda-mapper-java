@@ -20,40 +20,21 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
 
     private static final int MIN_SAMPLES_DEFAULT = 5;
 
-    private Metric<T> metric;
+    private final Metric<T> metric;
 
-    private double eps;
+    private final double eps;
 
-    private int minSamples;
+    private final int minSamples;
 
     private enum PointStatus {
         NOISE,
         CLUSTERED
     }
 
-    public DBSCANSimple(Metric<T> metric) {
-        this(metric, EPS_DEFAULT, MIN_SAMPLES_DEFAULT);
-    }
-
-    public DBSCANSimple(Metric<T> metric, Double eps) {
-        this(metric, eps, MIN_SAMPLES_DEFAULT);
-    }
-
-    public DBSCANSimple(Metric<T> metric, Double eps, Integer minSamples) {
+    private DBSCANSimple(Metric<T> metric, Double eps, Integer minSamples) {
         this.metric = metric;
-        if (eps == null || eps <= 0) {
-            LOGGER.warn("Found eps = {}, but expected > 0. Using default eps = {}", eps, EPS_DEFAULT);
-            this.eps = EPS_DEFAULT;
-        } else {
-            this.eps = eps;
-        }
-        if (minSamples == null || minSamples <= 0) {
-            LOGGER.warn("Found minSamples = %d, but expected > 0. Using default minSamples = %d", minSamples,
-                    MIN_SAMPLES_DEFAULT);
-            this.minSamples = MIN_SAMPLES_DEFAULT;
-        } else {
-            this.minSamples = minSamples;
-        }
+        this.eps = eps;
+        this.minSamples = minSamples;
     }
 
     private Collection<T> propagateCluster(final Collection<T> cluster,
@@ -121,6 +102,45 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
             }
         }
         return clusters;
+    }
+
+    public static class Builder<S> implements ClusteringAlgorithm.Builder<S> {
+
+        private int minSamples = MIN_SAMPLES_DEFAULT;
+
+        private double eps = EPS_DEFAULT;
+
+        private Metric<S> metric;
+
+        public Builder<S> withMetric(Metric<S> metric) {
+            this.metric = metric;
+            return this;
+        }
+
+        public Builder<S> withEps(double eps) {
+            this.eps = eps;
+            return this;
+        }
+
+        public Builder<S> withMinSamples(int minSamples) {
+            this.minSamples = minSamples;
+            return this;
+        }
+
+        @Override
+        public ClusteringAlgorithm<S> build() {
+            if (Double.isNaN(this.eps) || Double.isInfinite(this.eps) || this.eps <= 0) {
+                LOGGER.warn("Found eps = {}, but expected > 0. Using default eps = {}", eps, EPS_DEFAULT);
+                this.eps = EPS_DEFAULT;
+            }
+            if (this.minSamples <= 0) {
+                LOGGER.warn("Found minSamples = %d, but expected > 0. Using default minSamples = %d", minSamples,
+                        MIN_SAMPLES_DEFAULT);
+                this.minSamples = MIN_SAMPLES_DEFAULT;
+            }
+            return new DBSCANSimple<>(this.metric, this.eps, this.minSamples);
+        }
+
     }
 
 }

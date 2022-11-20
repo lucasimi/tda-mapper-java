@@ -2,8 +2,6 @@ package org.lucasimi.tda.mapper.cover;
 
 import java.util.Collection;
 
-import org.lucasimi.tda.mapper.topology.Lens;
-import org.lucasimi.tda.mapper.topology.TopologyUtils;
 import org.lucasimi.utils.Metric;
 import org.lucasimi.vptree.VPTree;
 import org.slf4j.Logger;
@@ -15,17 +13,13 @@ public class BallSearch<S> implements SearchAlgorithm<S> {
 
     public static final double DEFAULT_LEAF_SIZE_FACTOR = 0.01;
 
-    private double radius;
+    private final double radius;
 
-    private Metric<S> metric;
+    private final Metric<S> metric;
 
     private VPTree<S> vpTree;
 
-    public <T> BallSearch(Lens<S, T> lens, Metric<T> metric, double radius) {
-        this(TopologyUtils.pullback(lens, metric), radius);
-    }
-
-    public BallSearch(Metric<S> metric, double radius) {
+    private BallSearch(Metric<S> metric, double radius) {
         this.radius = radius;
         this.metric = metric;
     }
@@ -48,6 +42,29 @@ public class BallSearch<S> implements SearchAlgorithm<S> {
     @Override
     public Collection<S> getNeighbors(S point) {
         return this.vpTree.ballSearch(point, this.radius);
+    }
+
+    public static class Builder<S> implements SearchAlgorithm.Builder<S> {
+
+        private double radius;
+
+        private Metric<S> metric;
+
+        public Builder<S> withRadius(double radius) {
+            this.radius = radius;
+            return this;
+        }
+
+        public Builder<S> withMetric(Metric<S> metric) {
+            this.metric = metric;
+            return this;
+        }
+
+        @Override
+        public SearchAlgorithm<S> build() {
+            return new BallSearch<>(this.metric, this.radius);
+        }
+
     }
 
 }

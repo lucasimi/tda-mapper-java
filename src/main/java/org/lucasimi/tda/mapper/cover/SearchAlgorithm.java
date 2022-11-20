@@ -8,4 +8,10 @@ public interface SearchAlgorithm<S> {
 
     public Collection<S> getNeighbors(S point);
 
+    public static interface Builder<S> {
+
+        public SearchAlgorithm<S> build();
+
+    }
+
 }

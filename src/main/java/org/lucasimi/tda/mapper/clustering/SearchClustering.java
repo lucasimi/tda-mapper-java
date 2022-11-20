@@ -16,7 +16,7 @@ public class SearchClustering<S> implements ClusteringAlgorithm<S> {
 
     private SearchAlgorithm<S> searchAlgorithm;
 
-    public SearchClustering(SearchAlgorithm<S> searchAlgorithm) {
+    private SearchClustering(SearchAlgorithm<S> searchAlgorithm) {
         this.searchAlgorithm = searchAlgorithm;
     }
 
@@ -38,6 +38,33 @@ public class SearchClustering<S> implements ClusteringAlgorithm<S> {
             clusters.add(cluster);
         }
         return clusters;
+    }
+
+    public static class Builder<S> implements ClusteringAlgorithm.Builder<S> {
+
+        private SearchAlgorithm.Builder<S> searchAlgorithmBuilder;
+
+        private SearchAlgorithm<S> searchAlgorithm;
+
+        public Builder<S> withSearchAlgorithm(SearchAlgorithm<S> searchAlgorithm) {
+            this.searchAlgorithm = searchAlgorithm;
+            return this;
+        }
+
+        public Builder<S> withSearchAlgorithm(SearchAlgorithm.Builder<S> searchAlgorithmBuilder) {
+            this.searchAlgorithmBuilder = searchAlgorithmBuilder;
+            return this;
+        }
+
+        @Override
+        public ClusteringAlgorithm<S> build() {
+            if (this.searchAlgorithm != null) {
+                return new SearchClustering<>(this.searchAlgorithm);
+            } else {
+                return new SearchClustering<>(this.searchAlgorithmBuilder.build());
+            }
+        }
+
     }
 
 }

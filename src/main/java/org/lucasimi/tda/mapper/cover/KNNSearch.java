@@ -2,24 +2,18 @@ package org.lucasimi.tda.mapper.cover;
 
 import java.util.Collection;
 
-import org.lucasimi.tda.mapper.topology.Lens;
-import org.lucasimi.tda.mapper.topology.TopologyUtils;
 import org.lucasimi.utils.Metric;
 import org.lucasimi.vptree.VPTree;
 
 public class KNNSearch<S> implements SearchAlgorithm<S> {
 
-    private int neighbors;
+    private final int neighbors;
 
-    private Metric<S> metric;
+    private final Metric<S> metric;
 
     private VPTree<S> vpTree;
 
-    public <T> KNNSearch(Lens<S, T> lens, Metric<T> metric, int neighbors) {
-        this(TopologyUtils.pullback(lens, metric), neighbors);
-    }
-
-    public KNNSearch(Metric<S> metric, int neighbors) {
+    private KNNSearch(Metric<S> metric, int neighbors) {
         this.neighbors = neighbors;
         this.metric = metric;
     }
@@ -36,6 +30,29 @@ public class KNNSearch<S> implements SearchAlgorithm<S> {
     @Override
     public Collection<S> getNeighbors(S point) {
         return this.vpTree.knnSearch(point, this.neighbors);
+    }
+
+    public static class Builder<S> implements SearchAlgorithm.Builder<S> {
+
+        private int neighbors;
+
+        private Metric<S> metric;
+
+        public Builder<S> withNeighbors(int neighbors) {
+            this.neighbors = neighbors;
+            return this;
+        }
+
+        public Builder<S> withMetric(Metric<S> metric) {
+            this.metric = metric;
+            return this;
+        }
+
+        @Override
+        public SearchAlgorithm<S> build() {
+            return new KNNSearch<>(this.metric, this.neighbors);
+        }
+
     }
 
 }

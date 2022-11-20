@@ -25,11 +25,19 @@ public class BallCoverTest {
         dataset.add(new float[] { 1.0f, 1.0f });
         dataset.add(new float[] { 1.0f, 0.0f });
 
-        SearchCover<float[]> covering = new SearchCover<>(new BallSearch<>(lens, metric, 0.5));
+        SearchAlgorithm<float[]> ballSearch1 = new BallSearch.Builder<float[]>()
+                .withMetric(TopologyUtils.pullback(lens, metric))
+                .withRadius(0.5)
+                .build();
+        SearchCover<float[]> covering = new SearchCover<>(ballSearch1);
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(3, groups.size());
 
-        covering = new SearchCover<>(new BallSearch<>(lens, metric, 1.5));
+        SearchAlgorithm<float[]> ballSearch2 = new BallSearch.Builder<float[]>()
+                .withMetric(TopologyUtils.pullback(lens, metric))
+                .withRadius(1.5)
+                .build();
+        covering = new SearchCover<>(ballSearch2);
         groups = covering.run(dataset);
         Assertions.assertEquals(1, groups.size());
     }
@@ -46,11 +54,19 @@ public class BallCoverTest {
         dataset.add(new float[] { 0.0f, -1.1f });
         dataset.add(new float[] { 0.0f, -1.2f });
 
-        SearchCover<float[]> covering = new SearchCover<>(new BallSearch<>(lens, metric, 0.5));
+        SearchAlgorithm<float[]> ballSearch1 = new BallSearch.Builder<float[]>()
+                .withMetric(TopologyUtils.pullback(lens, metric))
+                .withRadius(0.5)
+                .build();
+        SearchCover<float[]> covering = new SearchCover<>(ballSearch1);
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(2, groups.size());
 
-        covering = new SearchCover<>(new BallSearch<>(lens, metric, 0.09));
+        SearchAlgorithm<float[]> ballSearch2 = new BallSearch.Builder<float[]>()
+                .withMetric(TopologyUtils.pullback(lens, metric))
+                .withRadius(0.09)
+                .build();
+        covering = new SearchCover<>(ballSearch2);
         groups = covering.run(dataset);
         Assertions.assertEquals(6, groups.size());
     }
@@ -61,7 +77,11 @@ public class BallCoverTest {
         dataset.addAll(DatasetGenerator.randomDataset(20000, 2, new float[] { 1.0f, 0.0f }, 0.3f));
         dataset.addAll(DatasetGenerator.randomDataset(20000, 2, new float[] { 0.0f, 1.0f }, 0.3f));
 
-        SearchCover<float[]> covering = new SearchCover<>(new BallSearch<>(lens, metric, 0.85));
+        SearchAlgorithm<float[]> ballSearch = new BallSearch.Builder<float[]>()
+                .withMetric(TopologyUtils.pullback(lens, metric))
+                .withRadius(0.85)
+                .build();
+        SearchCover<float[]> covering = new SearchCover<>(ballSearch);
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(2, groups.size());
     }

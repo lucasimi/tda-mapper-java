@@ -8,7 +8,7 @@ public class SearchCover<S> implements CoverAlgorithm<S> {
 
     private SearchAlgorithm<S> searchAlgorithm;
 
-    public <T> SearchCover(SearchAlgorithm<S> searchAlgorithm) {
+    public SearchCover(SearchAlgorithm<S> searchAlgorithm) {
         this.searchAlgorithm = searchAlgorithm;
     }
 
@@ -32,6 +32,33 @@ public class SearchCover<S> implements CoverAlgorithm<S> {
             }
         }
         return clusters;
+    }
+
+    public static class Builder<S> implements CoverAlgorithm.Builder<S> {
+
+        private SearchAlgorithm.Builder<S> searchAlgorithmBuilder;
+
+        private SearchAlgorithm<S> searchAlgorithm;
+
+        public Builder<S> withSearchAlgorithm(SearchAlgorithm<S> searchAlgorithm) {
+            this.searchAlgorithm = searchAlgorithm;
+            return this;
+        }
+
+        public Builder<S> withSearchAlgorithm(SearchAlgorithm.Builder<S> searchAlgorithmBuilder) {
+            this.searchAlgorithmBuilder = searchAlgorithmBuilder;
+            return this;
+        }
+
+        @Override
+        public CoverAlgorithm<S> build() {
+            if (this.searchAlgorithm != null) {
+                return new SearchCover<>(this.searchAlgorithm);
+            } else {
+                return new SearchCover<>(this.searchAlgorithmBuilder.build());
+            }
+        }
+
     }
 
 }

@@ -19,4 +19,14 @@ public class CoverUtils {
         };
     }
 
+    public static <S> CoverAlgorithm.Builder<S> trivialCoverBuilder() {
+        return new CoverAlgorithm.Builder<S>() {
+
+            @Override
+            public CoverAlgorithm<S> build() {
+                return trivialCover();
+            }
+        };
+    }
+
 }
