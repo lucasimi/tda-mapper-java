@@ -29,7 +29,9 @@ public class BallCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withRadius(0.5)
                 .build();
-        SearchCover<float[]> covering = new SearchCover<>(ballSearch1);
+        CoverAlgorithm<float[]> covering = new SearchCover.Builder<float[]>()
+                .withSearchAlgorithm(ballSearch1)
+                .build();
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(3, groups.size());
 
@@ -37,7 +39,9 @@ public class BallCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withRadius(1.5)
                 .build();
-        covering = new SearchCover<>(ballSearch2);
+        covering = new SearchCover.Builder<float[]>()
+                .withSearchAlgorithm(ballSearch2)
+                .build();
         groups = covering.run(dataset);
         Assertions.assertEquals(1, groups.size());
     }
@@ -58,7 +62,9 @@ public class BallCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withRadius(0.5)
                 .build();
-        SearchCover<float[]> covering = new SearchCover<>(ballSearch1);
+        CoverAlgorithm<float[]> covering = new SearchCover.Builder<float[]>()
+                .withSearchAlgorithm(ballSearch1)
+                .build();
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(2, groups.size());
 
@@ -66,7 +72,9 @@ public class BallCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withRadius(0.09)
                 .build();
-        covering = new SearchCover<>(ballSearch2);
+        covering = new SearchCover.Builder<float[]>()
+                .withSearchAlgorithm(ballSearch2)
+                .build();
         groups = covering.run(dataset);
         Assertions.assertEquals(6, groups.size());
     }
@@ -81,7 +89,9 @@ public class BallCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withRadius(0.85)
                 .build();
-        SearchCover<float[]> covering = new SearchCover<>(ballSearch);
+        CoverAlgorithm<float[]> covering = new SearchCover.Builder<float[]>()
+                .withSearchAlgorithm(ballSearch)
+                .build();
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(2, groups.size());
     }

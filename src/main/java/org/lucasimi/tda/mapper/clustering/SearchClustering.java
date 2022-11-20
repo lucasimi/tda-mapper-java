@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.lucasimi.tda.mapper.cover.CoverAlgorithm;
 import org.lucasimi.tda.mapper.cover.SearchAlgorithm;
 import org.lucasimi.tda.mapper.cover.SearchCover;
 import org.lucasimi.tda.mapper.pipeline.MapperGraph;
@@ -23,10 +24,13 @@ public class SearchClustering<S> implements ClusteringAlgorithm<S> {
     @Override
     public Collection<Collection<S>> run(Collection<S> dataset) {
         List<S> dataList = new ArrayList<>(dataset);
-        SearchCover<S> searchCover = new SearchCover<>(searchAlgorithm);
+        CoverAlgorithm<S> searchCover = new SearchCover.Builder<S>()
+                .withSearchAlgorithm(searchAlgorithm)
+                .build();
         Collection<Collection<S>> clusters = searchCover.run(dataset);
         MapperGraph graph = new MapperGraph(new ArrayList<>(dataset), clusters);
         Map<Integer, Set<MapperGraph.Vertex>> comps = graph.getConnectedComponents();
+        Collection<Collection<S>> ccs = new ArrayList<>(comps.size());
         for (Set<MapperGraph.Vertex> component : comps.values()) {
             Collection<S> cluster = new HashSet<>();
             for (MapperGraph.Vertex vertex : component) {
@@ -35,9 +39,9 @@ public class SearchClustering<S> implements ClusteringAlgorithm<S> {
                         .collect(Collectors.toList());
                 cluster.addAll(points);
             }
-            clusters.add(cluster);
+            ccs.add(cluster);
         }
-        return clusters;
+        return ccs;
     }
 
     public static class Builder<S> implements ClusteringAlgorithm.Builder<S> {
