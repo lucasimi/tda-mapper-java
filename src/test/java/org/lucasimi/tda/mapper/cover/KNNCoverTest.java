@@ -29,7 +29,9 @@ public class KNNCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withNeighbors(3)
                 .build();
-        CoverAlgorithm<float[]> covering = new SearchCover<>(knnSearch1);
+        CoverAlgorithm<float[]> covering = new SearchCover.Builder<float[]>()
+                .withSearchAlgorithm(knnSearch1)
+                .build();
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(1, groups.size());
 
@@ -37,7 +39,9 @@ public class KNNCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withNeighbors(1)
                 .build();
-        covering = new SearchCover<>(knnSearch2);
+        covering = new SearchCover.Builder<float[]>()
+                .withSearchAlgorithm(knnSearch2)
+                .build();
         groups = covering.run(dataset);
         Assertions.assertEquals(3, groups.size());
     }
@@ -58,7 +62,9 @@ public class KNNCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withNeighbors(3)
                 .build();
-        CoverAlgorithm<float[]> covering = new SearchCover<>(knnSearch1);
+        CoverAlgorithm<float[]> covering = new SearchCover.Builder<float[]>()
+                .withSearchAlgorithm(knnSearch1)
+                .build();
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(2, groups.size());
 
@@ -66,7 +72,9 @@ public class KNNCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withNeighbors(1)
                 .build();
-        covering = new SearchCover<>(knnSearch2);
+        covering = new SearchCover.Builder<float[]>()
+                .withSearchAlgorithm(knnSearch2)
+                .build();
         groups = covering.run(dataset);
         Assertions.assertEquals(6, groups.size());
     }
@@ -80,7 +88,9 @@ public class KNNCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withNeighbors(2000)
                 .build();
-        CoverAlgorithm<float[]> covering = new SearchCover<>(knnSearch);
+        CoverAlgorithm<float[]> covering = new SearchCover.Builder<float[]>()
+                .withSearchAlgorithm(knnSearch)
+                .build();
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(2, groups.size());
     }

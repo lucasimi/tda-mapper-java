@@ -8,7 +8,7 @@ public class SearchCover<S> implements CoverAlgorithm<S> {
 
     private SearchAlgorithm<S> searchAlgorithm;
 
-    public SearchCover(SearchAlgorithm<S> searchAlgorithm) {
+    private SearchCover(SearchAlgorithm<S> searchAlgorithm) {
         this.searchAlgorithm = searchAlgorithm;
     }
 

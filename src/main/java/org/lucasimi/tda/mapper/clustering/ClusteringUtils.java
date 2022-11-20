@@ -29,29 +29,4 @@ public class ClusteringUtils {
         };
     }
 
-    public static <S> Map<S, Collection<Integer>> getMultiLabels(Collection<Collection<S>> clusters) {
-        Map<S, Collection<Integer>> labels = new HashMap<>();
-        int labelId = 0;
-        for (Collection<S> cluster : clusters) {
-            for (S point : cluster) {
-                labels.putIfAbsent(point, new HashSet<>());
-                labels.get(point).add(labelId);
-            }
-            labelId += 1;
-        }
-        return labels;
-    }
-
-    public static <S> Map<S, Integer> getLabels(Collection<Collection<S>> clusters) {
-        Map<S, Integer> labels = new HashMap<>();
-        int labelId = 0;
-        for (Collection<S> cluster : clusters) {
-            for (S point : cluster) {
-                labels.put(point, labelId);
-            }
-            labelId += 1;
-        }
-        return labels;
-    }
-
 }
