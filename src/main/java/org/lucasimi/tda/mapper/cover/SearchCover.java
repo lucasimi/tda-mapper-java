@@ -2,7 +2,8 @@ package org.lucasimi.tda.mapper.cover;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SearchCover<S> implements CoverAlgorithm<S> {
 
@@ -16,15 +17,12 @@ public class SearchCover<S> implements CoverAlgorithm<S> {
     public Collection<Collection<S>> run(Collection<S> dataset) {
         Collection<S> centers = this.searchAlgorithm.fit(dataset);
         Collection<Collection<S>> clusters = new ArrayList<>(dataset.size());
-        HashMap<S, Boolean> coverMap = new HashMap<>(dataset.size());
-        for (S point : dataset) {
-            coverMap.put(point, false);
-        }
+        Set<S> coverSet = new HashSet<>(dataset.size());
         for (S point : centers) {
-            if (!coverMap.get(point)) {
+            if (!coverSet.contains(point)) {
                 Collection<S> neighbors = this.searchAlgorithm.getNeighbors(point);
                 for (S neighbor : neighbors) {
-                    coverMap.put(neighbor, true);
+                    coverSet.add(neighbor);
                 }
                 if (!neighbors.isEmpty()) {
                     clusters.add(neighbors);

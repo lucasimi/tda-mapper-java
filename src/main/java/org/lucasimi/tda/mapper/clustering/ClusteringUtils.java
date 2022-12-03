@@ -2,9 +2,6 @@ package org.lucasimi.tda.mapper.clustering;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 
 public class ClusteringUtils {
 
