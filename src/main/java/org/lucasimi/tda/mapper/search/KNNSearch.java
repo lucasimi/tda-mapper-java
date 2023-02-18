@@ -1,4 +1,4 @@
-package org.lucasimi.tda.mapper.cover;
+package org.lucasimi.tda.mapper.search;
 
 import java.util.Collection;
 
@@ -12,6 +12,10 @@ public class KNNSearch<S> implements SearchAlgorithm<S> {
     private final Metric<S> metric;
 
     private VPTree<S> vpTree;
+
+    public static <T> Builder<T> newBuilder() {
+        return new Builder<>();
+    }
 
     private KNNSearch(Metric<S> metric, int neighbors) {
         this.neighbors = neighbors;
@@ -37,6 +41,8 @@ public class KNNSearch<S> implements SearchAlgorithm<S> {
         private int neighbors;
 
         private Metric<S> metric;
+
+        private Builder() {}
 
         public Builder<S> withNeighbors(int neighbors) {
             this.neighbors = neighbors;

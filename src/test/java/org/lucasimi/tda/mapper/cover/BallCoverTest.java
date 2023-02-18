@@ -8,6 +8,8 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.lucasimi.tda.mapper.DatasetGenerator;
+import org.lucasimi.tda.mapper.search.BallSearch;
+import org.lucasimi.tda.mapper.search.SearchAlgorithm;
 import org.lucasimi.tda.mapper.topology.Lens;
 import org.lucasimi.tda.mapper.topology.TopologyUtils;
 import org.lucasimi.utils.Metric;
@@ -29,7 +31,7 @@ public class BallCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withRadius(0.5)
                 .build();
-        CoverAlgorithm<float[]> covering = new SearchCover.Builder<float[]>()
+        CoverAlgorithm<float[]> covering = SearchCover.<float[]>newBuilder()
                 .withSearchAlgorithm(ballSearch1)
                 .build();
         Collection<Collection<float[]>> groups = covering.run(dataset);
@@ -39,7 +41,7 @@ public class BallCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withRadius(1.5)
                 .build();
-        covering = new SearchCover.Builder<float[]>()
+        covering = SearchCover.<float[]>newBuilder()
                 .withSearchAlgorithm(ballSearch2)
                 .build();
         groups = covering.run(dataset);
@@ -62,7 +64,7 @@ public class BallCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withRadius(0.5)
                 .build();
-        CoverAlgorithm<float[]> covering = new SearchCover.Builder<float[]>()
+        CoverAlgorithm<float[]> covering = SearchCover.<float[]>newBuilder()
                 .withSearchAlgorithm(ballSearch1)
                 .build();
         Collection<Collection<float[]>> groups = covering.run(dataset);
@@ -72,7 +74,7 @@ public class BallCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withRadius(0.09)
                 .build();
-        covering = new SearchCover.Builder<float[]>()
+        covering = SearchCover.<float[]>newBuilder()
                 .withSearchAlgorithm(ballSearch2)
                 .build();
         groups = covering.run(dataset);
@@ -89,7 +91,7 @@ public class BallCoverTest {
                 .withMetric(TopologyUtils.pullback(lens, metric))
                 .withRadius(0.85)
                 .build();
-        CoverAlgorithm<float[]> covering = new SearchCover.Builder<float[]>()
+        CoverAlgorithm<float[]> covering = SearchCover.<float[]>newBuilder()
                 .withSearchAlgorithm(ballSearch)
                 .build();
         Collection<Collection<float[]>> groups = covering.run(dataset);

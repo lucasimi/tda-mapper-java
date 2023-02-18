@@ -5,12 +5,18 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.lucasimi.tda.mapper.search.SearchAlgorithm;
+
 public class SearchCover<S> implements CoverAlgorithm<S> {
 
     private SearchAlgorithm<S> searchAlgorithm;
 
     private SearchCover(SearchAlgorithm<S> searchAlgorithm) {
         this.searchAlgorithm = searchAlgorithm;
+    }
+
+    public static <T> Builder<T> newBuilder() {
+        return new Builder<>();
     }
 
     @Override
@@ -37,6 +43,8 @@ public class SearchCover<S> implements CoverAlgorithm<S> {
         private SearchAlgorithm.Builder<S> searchAlgorithmBuilder;
 
         private SearchAlgorithm<S> searchAlgorithm;
+
+        private Builder() {}
 
         public Builder<S> withSearchAlgorithm(SearchAlgorithm<S> searchAlgorithm) {
             this.searchAlgorithm = searchAlgorithm;

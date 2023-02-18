@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
 import org.lucasimi.tda.mapper.DatasetGenerator;
-import org.lucasimi.tda.mapper.cover.BallSearch;
+import org.lucasimi.tda.mapper.search.BallSearch;
 import org.lucasimi.tda.mapper.topology.TopologyUtils;
 
 public class SearchClusteringTest {

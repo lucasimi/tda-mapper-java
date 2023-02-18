@@ -17,6 +17,10 @@ public class MapperPipeline<S> {
 
     private ClusteringAlgorithm.Builder<S> clusteringBuilder;
 
+    public static <T> Builder<T> newBuilder() {
+        return new Builder<>();
+    }
+
     private MapperPipeline(Builder<S> builder) {
         this.coverBuilder = builder.coverBuilder;
         this.clusteringBuilder = builder.clusteringBuilder;
@@ -49,12 +53,14 @@ public class MapperPipeline<S> {
 
         private ClusteringAlgorithm.Builder<S> clusteringBuilder;
 
-        public Builder<S> withCoverAlgorithm(CoverAlgorithm.Builder<S> coverBuilder) {
+        private Builder() {}
+
+        public Builder<S> withCover(CoverAlgorithm.Builder<S> coverBuilder) {
             this.coverBuilder = coverBuilder;
             return this;
         }
 
-        public Builder<S> withClusteringAlgorithm(ClusteringAlgorithm.Builder<S> clusteringBuilder) {
+        public Builder<S> withClustering(ClusteringAlgorithm.Builder<S> clusteringBuilder) {
             this.clusteringBuilder = clusteringBuilder;
             return this;
         }

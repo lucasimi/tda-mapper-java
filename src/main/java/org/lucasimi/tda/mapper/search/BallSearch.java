@@ -1,4 +1,4 @@
-package org.lucasimi.tda.mapper.cover;
+package org.lucasimi.tda.mapper.search;
 
 import java.util.Collection;
 

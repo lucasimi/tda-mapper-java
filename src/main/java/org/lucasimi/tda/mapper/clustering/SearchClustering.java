@@ -9,9 +9,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.lucasimi.tda.mapper.cover.CoverAlgorithm;
-import org.lucasimi.tda.mapper.cover.SearchAlgorithm;
 import org.lucasimi.tda.mapper.cover.SearchCover;
 import org.lucasimi.tda.mapper.pipeline.MapperGraph;
+import org.lucasimi.tda.mapper.search.SearchAlgorithm;
 
 public class SearchClustering<S> implements ClusteringAlgorithm<S> {
 
@@ -24,7 +24,7 @@ public class SearchClustering<S> implements ClusteringAlgorithm<S> {
     @Override
     public Collection<Collection<S>> run(Collection<S> dataset) {
         List<S> dataList = new ArrayList<>(dataset);
-        CoverAlgorithm<S> searchCover = new SearchCover.Builder<S>()
+        CoverAlgorithm<S> searchCover = SearchCover.<S>newBuilder()
                 .withSearchAlgorithm(searchAlgorithm)
                 .build();
         Collection<Collection<S>> clusters = searchCover.run(dataset);
