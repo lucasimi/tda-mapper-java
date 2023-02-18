@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.lucasimi.tda.mapper.clustering.ClusteringAlgorithm;
-import org.lucasimi.tda.mapper.cover.CoverAlgorithm;
+import org.lucasimi.tda.mapper.clustering.Clustering;
+import org.lucasimi.tda.mapper.cover.Cover;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,9 +13,9 @@ public class MapperPipeline<S> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapperPipeline.class);
 
-    private CoverAlgorithm.Builder<S> coverBuilder;
+    private Cover.Builder<S> coverBuilder;
 
-    private ClusteringAlgorithm.Builder<S> clusteringBuilder;
+    private Clustering.Builder<S> clusteringBuilder;
 
     public static <T> Builder<T> newBuilder() {
         return new Builder<>();
@@ -49,18 +49,18 @@ public class MapperPipeline<S> {
 
     public static class Builder<S> {
 
-        private CoverAlgorithm.Builder<S> coverBuilder;
+        private Cover.Builder<S> coverBuilder;
 
-        private ClusteringAlgorithm.Builder<S> clusteringBuilder;
+        private Clustering.Builder<S> clusteringBuilder;
 
         private Builder() {}
 
-        public Builder<S> withCover(CoverAlgorithm.Builder<S> coverBuilder) {
+        public Builder<S> withCover(Cover.Builder<S> coverBuilder) {
             this.coverBuilder = coverBuilder;
             return this;
         }
 
-        public Builder<S> withClustering(ClusteringAlgorithm.Builder<S> clusteringBuilder) {
+        public Builder<S> withClustering(Clustering.Builder<S> clusteringBuilder) {
             this.clusteringBuilder = clusteringBuilder;
             return this;
         }

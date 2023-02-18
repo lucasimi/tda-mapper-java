@@ -20,8 +20,8 @@ public class SearchClusteringTest {
         dataset.addAll(dataset1);
         dataset.addAll(dataset2);
 
-        ClusteringAlgorithm<float[]> searchClustering = new SearchClustering.Builder<float[]>()
-                .withSearchAlgorithm(new BallSearch.Builder<float[]>()
+        Clustering<float[]> searchClustering = new SearchClustering.Builder<float[]>()
+                .withSearch(BallSearch.<float[]>newBuilder()
                         .withMetric(TopologyUtils.euclideanMetric())
                         .withRadius(15.0))
                 .build();

@@ -1,14 +1,14 @@
-package org.lucasimi.tda.mapper.cover;
+package org.lucasimi.tda.mapper.clustering;
 
 import java.util.Collection;
 
-public interface CoverAlgorithm<S> {
+public interface Clustering<S> {
 
     public Collection<Collection<S>> run(Collection<S> dataset);
 
     public static interface Builder<S> {
 
-        public CoverAlgorithm<S> build();
+        public Clustering<S> build();
 
     }
 

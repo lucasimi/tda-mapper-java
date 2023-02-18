@@ -7,7 +7,7 @@ import org.lucasimi.vptree.VPTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BallSearch<S> implements SearchAlgorithm<S> {
+public class BallSearch<S> implements Search<S> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BallSearch.class);
 
@@ -19,9 +19,13 @@ public class BallSearch<S> implements SearchAlgorithm<S> {
 
     private VPTree<S> vpTree;
 
-    private BallSearch(Metric<S> metric, double radius) {
-        this.radius = radius;
-        this.metric = metric;
+    private BallSearch(Builder<S> builder) {
+        this.radius = builder.radius;
+        this.metric = builder.metric;
+    }
+
+    public static <T> Builder<T> newBuilder() {
+        return new Builder<>();
     }
 
     @Override
@@ -44,11 +48,13 @@ public class BallSearch<S> implements SearchAlgorithm<S> {
         return this.vpTree.ballSearch(point, this.radius);
     }
 
-    public static class Builder<S> implements SearchAlgorithm.Builder<S> {
+    public static class Builder<S> implements Search.Builder<S> {
 
         private double radius;
 
         private Metric<S> metric;
+
+        private Builder() {}
 
         public Builder<S> withRadius(double radius) {
             this.radius = radius;
@@ -61,8 +67,8 @@ public class BallSearch<S> implements SearchAlgorithm<S> {
         }
 
         @Override
-        public SearchAlgorithm<S> build() {
-            return new BallSearch<>(this.metric, this.radius);
+        public Search<S> build() {
+            return new BallSearch<>(this);
         }
 
     }

@@ -11,7 +11,7 @@ public class CoverUtilsTest {
     @Test
     public void testTrivialCover() {
         Collection<float[]> dataset = DatasetGenerator.randomDataset(100, 100, 0.0f, 1.0f);
-        CoverAlgorithm<float[]> coverAlgorithm = CoverUtils.trivialCover();
+        Cover<float[]> coverAlgorithm = CoverUtils.trivialCover();
         Collection<Collection<float[]>> clusters = coverAlgorithm.run(dataset);
         Assertions.assertEquals(1, clusters.size());
     }

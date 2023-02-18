@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.lucasimi.utils.Metric;
 import org.lucasimi.vptree.VPTree;
 
-public class KNNSearch<S> implements SearchAlgorithm<S> {
+public class KNNSearch<S> implements Search<S> {
 
     private final int neighbors;
 
@@ -17,9 +17,9 @@ public class KNNSearch<S> implements SearchAlgorithm<S> {
         return new Builder<>();
     }
 
-    private KNNSearch(Metric<S> metric, int neighbors) {
-        this.neighbors = neighbors;
-        this.metric = metric;
+    private KNNSearch(Builder<S> builder) {
+        this.neighbors = builder.neighbors;
+        this.metric = builder.metric;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class KNNSearch<S> implements SearchAlgorithm<S> {
         return this.vpTree.knnSearch(point, this.neighbors);
     }
 
-    public static class Builder<S> implements SearchAlgorithm.Builder<S> {
+    public static class Builder<S> implements Search.Builder<S> {
 
         private int neighbors;
 
@@ -55,8 +55,8 @@ public class KNNSearch<S> implements SearchAlgorithm<S> {
         }
 
         @Override
-        public SearchAlgorithm<S> build() {
-            return new KNNSearch<>(this.metric, this.neighbors);
+        public Search<S> build() {
+            return new KNNSearch<>(this);
         }
 
     }

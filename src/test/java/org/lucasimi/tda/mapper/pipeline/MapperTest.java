@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.lucasimi.tda.mapper.DatasetGenerator;
-import org.lucasimi.tda.mapper.clustering.ClusteringAlgorithm;
+import org.lucasimi.tda.mapper.clustering.Clustering;
 import org.lucasimi.tda.mapper.clustering.ClusteringUtils;
 import org.lucasimi.tda.mapper.cover.SearchCover;
 import org.lucasimi.tda.mapper.search.BallSearch;
@@ -18,7 +18,7 @@ import org.lucasimi.utils.Metric;
 
 public class MapperTest {
 
-    ClusteringAlgorithm<float[]> clusterer = ClusteringUtils.trivialClustering();
+    Clustering<float[]> clusterer = ClusteringUtils.trivialClustering();
 
     Lens<float[], float[]> lens = TopologyUtils.identity();
 
@@ -34,7 +34,7 @@ public class MapperTest {
         float radius = (float) (side * Math.sqrt(dim) / Math.pow(size, 1.0 / dim));
         MapperPipeline<float[]> mapperPipeline = MapperPipeline.<float[]>newBuilder()
                 .withCover(SearchCover.<float[]>newBuilder()
-                        .withSearchAlgorithm(new BallSearch.Builder<float[]>()
+                        .withSearch(BallSearch.<float[]>newBuilder()
                                 .withMetric(TopologyUtils.pullback(lens, metric))
                                 .withRadius(radius * 0.4)))
                 .withClustering(ClusteringUtils.trivialClusteringBuilder())
@@ -52,7 +52,7 @@ public class MapperTest {
 
         MapperPipeline<float[]> mapperPipeline = MapperPipeline.<float[]>newBuilder()
                 .withCover(SearchCover.<float[]>newBuilder()
-                        .withSearchAlgorithm(new BallSearch.Builder<float[]>()
+                        .withSearch(BallSearch.<float[]>newBuilder()
                                 .withMetric(TopologyUtils.pullback(lens, metric))
                                 .withRadius(0.5)))
                 .withClustering(ClusteringUtils.trivialClusteringBuilder())
@@ -76,7 +76,7 @@ public class MapperTest {
 
         MapperPipeline<float[]> mapperPipeline = MapperPipeline.<float[]>newBuilder()
                 .withCover(SearchCover.<float[]>newBuilder()
-                        .withSearchAlgorithm(new BallSearch.Builder<float[]>()
+                        .withSearch(BallSearch.<float[]>newBuilder()
                                 .withMetric(TopologyUtils.pullback(lens, metric))
                                 .withRadius(0.09)))
                 .withClustering(ClusteringUtils.trivialClusteringBuilder())
@@ -88,7 +88,7 @@ public class MapperTest {
 
         mapperPipeline = MapperPipeline.<float[]>newBuilder()
                 .withCover(SearchCover.<float[]>newBuilder()
-                        .withSearchAlgorithm(new BallSearch.Builder<float[]>()
+                        .withSearch(BallSearch.<float[]>newBuilder()
                                 .withMetric(TopologyUtils.pullback(lens, metric))
                                 .withRadius(0.15)))
                 .withClustering(ClusteringUtils.trivialClusteringBuilder())
@@ -106,7 +106,7 @@ public class MapperTest {
 
         MapperPipeline<float[]> mapperPipeline = MapperPipeline.<float[]>newBuilder()
                 .withCover(SearchCover.<float[]>newBuilder()
-                        .withSearchAlgorithm(new BallSearch.Builder<float[]>()
+                        .withSearch(BallSearch.<float[]>newBuilder()
                                 .withMetric(TopologyUtils.pullback(lens, metric))
                                 .withRadius(0.5)))
                 .withClustering(ClusteringUtils.trivialClusteringBuilder())

@@ -8,8 +8,8 @@ public class CoverUtils {
     private CoverUtils() {
     }
 
-    public static <S> CoverAlgorithm<S> trivialCover() {
-        return new CoverAlgorithm<S>() {
+    public static <S> Cover<S> trivialCover() {
+        return new Cover<S>() {
 
             @Override
             public Collection<Collection<S>> run(Collection<S> dataset) {
@@ -19,11 +19,11 @@ public class CoverUtils {
         };
     }
 
-    public static <S> CoverAlgorithm.Builder<S> trivialCoverBuilder() {
-        return new CoverAlgorithm.Builder<S>() {
+    public static <S> Cover.Builder<S> trivialCoverBuilder() {
+        return new Cover.Builder<S>() {
 
             @Override
-            public CoverAlgorithm<S> build() {
+            public Cover<S> build() {
                 return trivialCover();
             }
         };

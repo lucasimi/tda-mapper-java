@@ -8,24 +8,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.lucasimi.tda.mapper.cover.CoverAlgorithm;
+import org.lucasimi.tda.mapper.cover.Cover;
 import org.lucasimi.tda.mapper.cover.SearchCover;
 import org.lucasimi.tda.mapper.pipeline.MapperGraph;
-import org.lucasimi.tda.mapper.search.SearchAlgorithm;
+import org.lucasimi.tda.mapper.search.Search;
 
-public class SearchClustering<S> implements ClusteringAlgorithm<S> {
+public class SearchClustering<S> implements Clustering<S> {
 
-    private SearchAlgorithm<S> searchAlgorithm;
+    private Search<S> search;
 
-    private SearchClustering(SearchAlgorithm<S> searchAlgorithm) {
-        this.searchAlgorithm = searchAlgorithm;
+    private SearchClustering(Builder<S> builder) {
+        this.search = builder.search;
     }
 
     @Override
     public Collection<Collection<S>> run(Collection<S> dataset) {
         List<S> dataList = new ArrayList<>(dataset);
-        CoverAlgorithm<S> searchCover = SearchCover.<S>newBuilder()
-                .withSearchAlgorithm(searchAlgorithm)
+        Cover<S> searchCover = SearchCover.<S>newBuilder()
+                .withSearch(search)
                 .build();
         Collection<Collection<S>> clusters = searchCover.run(dataset);
         MapperGraph graph = new MapperGraph(new ArrayList<>(dataset), clusters);
@@ -44,29 +44,31 @@ public class SearchClustering<S> implements ClusteringAlgorithm<S> {
         return ccs;
     }
 
-    public static class Builder<S> implements ClusteringAlgorithm.Builder<S> {
+    public static class Builder<S> implements Clustering.Builder<S> {
 
-        private SearchAlgorithm.Builder<S> searchAlgorithmBuilder;
+        private Search.Builder<S> searchBuilder;
 
-        private SearchAlgorithm<S> searchAlgorithm;
+        private Search<S> search;
 
-        public Builder<S> withSearchAlgorithm(SearchAlgorithm<S> searchAlgorithm) {
-            this.searchAlgorithm = searchAlgorithm;
+        public Builder<S> withSearch(Search<S> search) {
+            this.search = search;
             return this;
         }
 
-        public Builder<S> withSearchAlgorithm(SearchAlgorithm.Builder<S> searchAlgorithmBuilder) {
-            this.searchAlgorithmBuilder = searchAlgorithmBuilder;
+        public Builder<S> withSearch(Search.Builder<S> searchBuilder) {
+            this.searchBuilder = searchBuilder;
             return this;
         }
 
         @Override
-        public ClusteringAlgorithm<S> build() {
-            if (this.searchAlgorithm != null) {
-                return new SearchClustering<>(this.searchAlgorithm);
-            } else {
-                return new SearchClustering<>(this.searchAlgorithmBuilder.build());
+        public Clustering<S> build() {
+            if (this.search == null) {
+                if (this.searchBuilder == null) {
+                    return null;
+                }
+                this.search = this.searchBuilder.build();
             }
+            return new SearchClustering<>(this);
         }
 
     }

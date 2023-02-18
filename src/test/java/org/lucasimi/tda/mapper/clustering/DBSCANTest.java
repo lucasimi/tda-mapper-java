@@ -19,7 +19,7 @@ public class DBSCANTest {
         dataset.addAll(dataset1);
         dataset.addAll(dataset2);
 
-        ClusteringAlgorithm<float[]> dbscan = new DBSCANFaster.Builder<float[]>()
+        Clustering<float[]> dbscan = DBSCANFaster.<float[]>newBuilder()
                 .withMetric(TopologyUtils.euclideanMetric())
                 .withEps(15.0)
                 .withMinSamples(5)
@@ -32,7 +32,7 @@ public class DBSCANTest {
     @Test
     public void testDBSCANFasterMinSamples() {
         Collection<float[]> dataset = DatasetGenerator.randomDataset(100, 2, 0.0f, 10.0f);
-        ClusteringAlgorithm<float[]> dbscan = new DBSCANFaster.Builder<float[]>()
+        Clustering<float[]> dbscan = DBSCANFaster.<float[]>newBuilder()
                 .withMetric(TopologyUtils.euclideanMetric())
                 .withEps(15.0)
                 .withMinSamples(101)
@@ -49,7 +49,7 @@ public class DBSCANTest {
         dataset.addAll(dataset1);
         dataset.addAll(dataset2);
 
-        ClusteringAlgorithm<float[]> dbscan = new DBSCANSimple.Builder<float[]>()
+        Clustering<float[]> dbscan = DBSCANSimple.<float[]>newBuilder()
                 .withMetric(TopologyUtils.euclideanMetric())
                 .withEps(15.0)
                 .withMinSamples(5)
@@ -62,7 +62,7 @@ public class DBSCANTest {
     @Test
     public void testDBSCANSimpleMinSamples() {
         Collection<float[]> dataset = DatasetGenerator.randomDataset(100, 2, 0.0f, 10.0f);
-        ClusteringAlgorithm<float[]> dbscan = new DBSCANSimple.Builder<float[]>()
+        Clustering<float[]> dbscan = DBSCANSimple.<float[]>newBuilder()
                 .withMetric(TopologyUtils.euclideanMetric())
                 .withEps(15.0)
                 .withMinSamples(101)
