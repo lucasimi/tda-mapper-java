@@ -21,6 +21,10 @@ public class SearchClustering<S> implements Clustering<S> {
         this.search = builder.search;
     }
 
+    public static <T> Builder<T> newBuilder() {
+        return new Builder<>();
+    }
+
     @Override
     public Collection<Collection<S>> run(Collection<S> dataset) {
         List<S> dataList = new ArrayList<>(dataset);
@@ -49,6 +53,8 @@ public class SearchClustering<S> implements Clustering<S> {
         private Search.Builder<S> searchBuilder;
 
         private Search<S> search;
+
+        private Builder() {}
 
         public Builder<S> withSearch(Search<S> search) {
             this.search = search;
