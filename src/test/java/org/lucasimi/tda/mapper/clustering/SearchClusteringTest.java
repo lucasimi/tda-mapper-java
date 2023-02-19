@@ -7,13 +7,14 @@ import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
 import org.lucasimi.tda.mapper.DatasetGenerator;
+import org.lucasimi.tda.mapper.pipeline.MapperException.NoClusteringAlgorithm;
 import org.lucasimi.tda.mapper.search.BallSearch;
 import org.lucasimi.tda.mapper.topology.TopologyUtils;
 
 public class SearchClusteringTest {
 
     @Test
-    public void testBallSearch() {
+    public void testBallSearch() throws NoClusteringAlgorithm {
         Collection<float[]> dataset1 = DatasetGenerator.randomDataset(1, 2, 0.0f, 10.0f);
         Collection<float[]> dataset2 = DatasetGenerator.randomDataset(1, 2, 30.0f, 40.0f);
         Collection<float[]> dataset = new ArrayList<>(dataset1.size() + dataset2.size());

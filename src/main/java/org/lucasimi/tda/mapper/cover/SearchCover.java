@@ -5,14 +5,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.lucasimi.tda.mapper.pipeline.MapperException.NoCoverAlgorithm;
 import org.lucasimi.tda.mapper.search.Search;
 
 public class SearchCover<S> implements Cover<S> {
 
     private Search<S> search;
 
-    private SearchCover(Builder<S> builder) {
-        this.search = builder.search;
+    private SearchCover(Search<S> search) {
+        this.search = search;
     }
 
     public static <T> Builder<T> newBuilder() {
@@ -42,14 +43,8 @@ public class SearchCover<S> implements Cover<S> {
 
         private Search.Builder<S> searchBuilder;
 
-        private Search<S> search;
 
         private Builder() {}
-
-        public Builder<S> withSearch(Search<S> search) {
-            this.search = search;
-            return this;
-        }
 
         public Builder<S> withSearch(Search.Builder<S> searchBuilder) {
             this.searchBuilder = searchBuilder;
@@ -57,14 +52,12 @@ public class SearchCover<S> implements Cover<S> {
         }
 
         @Override
-        public Cover<S> build() {
-            if (this.search == null) {
-                if (this.searchBuilder == null) {
-                    return null;
-                }
-                this.search = this.searchBuilder.build();
+        public Cover<S> build() throws NoCoverAlgorithm {
+            Search<S> search = this.searchBuilder.build();
+            if (search == null) {
+                throw new NoCoverAlgorithm();
             }
-            return new SearchCover<>(this);
+            return new SearchCover<>(search);
         }
 
     }

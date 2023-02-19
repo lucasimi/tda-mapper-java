@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.lucasimi.tda.mapper.clustering.Clustering;
+import org.lucasimi.tda.mapper.clustering.ClusteringUtils;
 import org.lucasimi.tda.mapper.cover.Cover;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +29,27 @@ public class MapperPipeline<S> {
 
     public MapperGraph run(List<S> dataset) {
         long t0 = System.currentTimeMillis();
-        Collection<Collection<S>> cover = this.coverBuilder
-                .build()
-                .run(dataset);
+        Collection<Collection<S>> cover;
+        try {
+            cover = this.coverBuilder
+                    .build()
+                    .run(dataset);
+        } catch (MapperException e) {
+            e.printStackTrace();
+            return new MapperGraph();
+        }
         long t1 = System.currentTimeMillis();
         Collection<Collection<S>> clusters = cover.parallelStream()
-                .map(ds -> this.clusteringBuilder.build().run(ds))
+                .map(ds -> {
+                    Clustering<S> clustering;
+                    try {
+                        clustering = this.clusteringBuilder.build();
+                    } catch (MapperException e) {
+                        e.printStackTrace();
+                        clustering = ClusteringUtils.trivialClustering();
+                    }
+                    return clustering.run(ds);
+                })
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
         long t2 = System.currentTimeMillis();
