@@ -8,26 +8,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.lucasimi.tda.mapper.cover.CoverAlgorithm;
-import org.lucasimi.tda.mapper.cover.SearchAlgorithm;
+import org.lucasimi.tda.mapper.cover.Cover;
 import org.lucasimi.tda.mapper.cover.SearchCover;
+import org.lucasimi.tda.mapper.pipeline.MapperException.NoClusteringAlgorithm;
+import org.lucasimi.tda.mapper.pipeline.MapperException.NoCoverAlgorithm;
 import org.lucasimi.tda.mapper.pipeline.MapperGraph;
+import org.lucasimi.tda.mapper.search.Search;
 
-public class SearchClustering<S> implements ClusteringAlgorithm<S> {
+public class SearchClustering<S> implements Clustering<S> {
 
-    private SearchAlgorithm<S> searchAlgorithm;
+    private Cover<S> searchCover;
 
-    private SearchClustering(SearchAlgorithm<S> searchAlgorithm) {
-        this.searchAlgorithm = searchAlgorithm;
+    private SearchClustering(Cover<S> searchCover) {
+        this.searchCover = searchCover;
+    }
+
+    public static <T> Builder<T> newBuilder() {
+        return new Builder<>();
     }
 
     @Override
     public Collection<Collection<S>> run(Collection<S> dataset) {
         List<S> dataList = new ArrayList<>(dataset);
-        CoverAlgorithm<S> searchCover = new SearchCover.Builder<S>()
-                .withSearchAlgorithm(searchAlgorithm)
-                .build();
-        Collection<Collection<S>> clusters = searchCover.run(dataset);
+        Collection<Collection<S>> clusters = this.searchCover.run(dataset);
         MapperGraph graph = new MapperGraph(new ArrayList<>(dataset), clusters);
         Map<Integer, Set<MapperGraph.Vertex>> comps = graph.getConnectedComponents();
         Collection<Collection<S>> ccs = new ArrayList<>(comps.size());
@@ -44,29 +47,36 @@ public class SearchClustering<S> implements ClusteringAlgorithm<S> {
         return ccs;
     }
 
-    public static class Builder<S> implements ClusteringAlgorithm.Builder<S> {
+    public static class Builder<S> implements Clustering.Builder<S> {
 
-        private SearchAlgorithm.Builder<S> searchAlgorithmBuilder;
+        private Search.Builder<S> searchBuilder;
 
-        private SearchAlgorithm<S> searchAlgorithm;
 
-        public Builder<S> withSearchAlgorithm(SearchAlgorithm<S> searchAlgorithm) {
-            this.searchAlgorithm = searchAlgorithm;
-            return this;
-        }
+        private Builder() {}
 
-        public Builder<S> withSearchAlgorithm(SearchAlgorithm.Builder<S> searchAlgorithmBuilder) {
-            this.searchAlgorithmBuilder = searchAlgorithmBuilder;
+        public Builder<S> withSearch(Search.Builder<S> searchBuilder) {
+            this.searchBuilder = searchBuilder;
             return this;
         }
 
         @Override
-        public ClusteringAlgorithm<S> build() {
-            if (this.searchAlgorithm != null) {
-                return new SearchClustering<>(this.searchAlgorithm);
-            } else {
-                return new SearchClustering<>(this.searchAlgorithmBuilder.build());
+        public Clustering<S> build() throws NoClusteringAlgorithm {
+            if (this.searchBuilder == null) {
+                throw new NoClusteringAlgorithm();
             }
+            Cover<S> searchCover;
+            try {
+                searchCover = SearchCover.<S>newBuilder()
+                        .withSearch(this.searchBuilder)
+                        .build();
+            } catch (NoCoverAlgorithm e) {
+                e.printStackTrace();
+                throw new NoClusteringAlgorithm();
+            }
+            if (searchCover == null) {
+                throw new NoClusteringAlgorithm();
+            }
+            return new SearchClustering<>(searchCover);
         }
 
     }

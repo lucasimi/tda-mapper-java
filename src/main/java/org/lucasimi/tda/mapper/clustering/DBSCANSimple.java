@@ -12,7 +12,7 @@ import org.lucasimi.utils.Metric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
+public class DBSCANSimple<T> implements Clustering<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DBSCANSimple.class);
 
@@ -29,6 +29,10 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
     private enum PointStatus {
         NOISE,
         CLUSTERED
+    }
+
+    public static <S> Builder<S> newBuilder() {
+        return new Builder<>();
     }
 
     private DBSCANSimple(Metric<T> metric, Double eps, Integer minSamples) {
@@ -104,13 +108,15 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
         return clusters;
     }
 
-    public static class Builder<S> implements ClusteringAlgorithm.Builder<S> {
+    public static class Builder<S> implements Clustering.Builder<S> {
 
         private int minSamples = MIN_SAMPLES_DEFAULT;
 
         private double eps = EPS_DEFAULT;
 
         private Metric<S> metric;
+
+        private Builder() {}
 
         public Builder<S> withMetric(Metric<S> metric) {
             this.metric = metric;
@@ -128,7 +134,7 @@ public class DBSCANSimple<T> implements ClusteringAlgorithm<T> {
         }
 
         @Override
-        public ClusteringAlgorithm<S> build() {
+        public Clustering<S> build() {
             if (Double.isNaN(this.eps) || Double.isInfinite(this.eps) || this.eps <= 0) {
                 LOGGER.warn("Found eps = {}, but expected > 0. Using default eps = {}", eps, EPS_DEFAULT);
                 this.eps = EPS_DEFAULT;

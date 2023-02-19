@@ -1,11 +1,11 @@
-package org.lucasimi.tda.mapper.cover;
+package org.lucasimi.tda.mapper.search;
 
 import java.util.Collection;
 
 import org.lucasimi.utils.Metric;
 import org.lucasimi.vptree.VPTree;
 
-public class KNNSearch<S> implements SearchAlgorithm<S> {
+public class KNNSearch<S> implements Search<S> {
 
     private final int neighbors;
 
@@ -13,9 +13,13 @@ public class KNNSearch<S> implements SearchAlgorithm<S> {
 
     private VPTree<S> vpTree;
 
-    private KNNSearch(Metric<S> metric, int neighbors) {
-        this.neighbors = neighbors;
-        this.metric = metric;
+    public static <T> Builder<T> newBuilder() {
+        return new Builder<>();
+    }
+
+    private KNNSearch(Builder<S> builder) {
+        this.neighbors = builder.neighbors;
+        this.metric = builder.metric;
     }
 
     @Override
@@ -32,11 +36,13 @@ public class KNNSearch<S> implements SearchAlgorithm<S> {
         return this.vpTree.knnSearch(point, this.neighbors);
     }
 
-    public static class Builder<S> implements SearchAlgorithm.Builder<S> {
+    public static class Builder<S> implements Search.Builder<S> {
 
         private int neighbors;
 
         private Metric<S> metric;
+
+        private Builder() {}
 
         public Builder<S> withNeighbors(int neighbors) {
             this.neighbors = neighbors;
@@ -49,8 +55,8 @@ public class KNNSearch<S> implements SearchAlgorithm<S> {
         }
 
         @Override
-        public SearchAlgorithm<S> build() {
-            return new KNNSearch<>(this.metric, this.neighbors);
+        public Search<S> build() {
+            return new KNNSearch<>(this);
         }
 
     }
