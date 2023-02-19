@@ -8,6 +8,8 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.lucasimi.tda.mapper.DatasetGenerator;
+import org.lucasimi.tda.mapper.pipeline.MapperException.NoCoverAlgorithm;
+import org.lucasimi.tda.mapper.search.KNNSearch;
 import org.lucasimi.tda.mapper.topology.Lens;
 import org.lucasimi.tda.mapper.topology.TopologyUtils;
 import org.lucasimi.utils.Metric;
@@ -19,35 +21,31 @@ public class KNNCoverTest {
     Lens<float[], float[]> lens = TopologyUtils.identity();
 
     @Test
-    public void testOneCover() {
+    public void testOneCover() throws NoCoverAlgorithm {
         List<float[]> dataset = new LinkedList<>();
         dataset.add(new float[] { 0.0f, 1.0f });
         dataset.add(new float[] { 1.0f, 1.0f });
         dataset.add(new float[] { 1.0f, 0.0f });
 
-        SearchAlgorithm<float[]> knnSearch1 = new KNNSearch.Builder<float[]>()
-                .withMetric(TopologyUtils.pullback(lens, metric))
-                .withNeighbors(3)
-                .build();
-        CoverAlgorithm<float[]> covering = new SearchCover.Builder<float[]>()
-                .withSearchAlgorithm(knnSearch1)
+        Cover<float[]> covering = SearchCover.<float[]>newBuilder()
+                .withSearch(KNNSearch.<float[]>newBuilder()
+                        .withMetric(TopologyUtils.pullback(lens, metric))
+                        .withNeighbors(3))
                 .build();
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(1, groups.size());
 
-        SearchAlgorithm<float[]> knnSearch2 = new KNNSearch.Builder<float[]>()
-                .withMetric(TopologyUtils.pullback(lens, metric))
-                .withNeighbors(1)
-                .build();
-        covering = new SearchCover.Builder<float[]>()
-                .withSearchAlgorithm(knnSearch2)
+        covering = SearchCover.<float[]>newBuilder()
+                .withSearch(KNNSearch.<float[]>newBuilder()
+                        .withMetric(TopologyUtils.pullback(lens, metric))
+                        .withNeighbors(1))
                 .build();
         groups = covering.run(dataset);
         Assertions.assertEquals(3, groups.size());
     }
 
     @Test
-    public void testTwoCovers() {
+    public void testTwoCovers() throws NoCoverAlgorithm {
         List<float[]> dataset = new LinkedList<>();
         // first cc
         dataset.add(new float[] { 0.0f, 1.0f });
@@ -58,38 +56,32 @@ public class KNNCoverTest {
         dataset.add(new float[] { 0.0f, -1.1f });
         dataset.add(new float[] { 0.0f, -1.2f });
 
-        SearchAlgorithm<float[]> knnSearch1 = new KNNSearch.Builder<float[]>()
-                .withMetric(TopologyUtils.pullback(lens, metric))
-                .withNeighbors(3)
-                .build();
-        CoverAlgorithm<float[]> covering = new SearchCover.Builder<float[]>()
-                .withSearchAlgorithm(knnSearch1)
+        Cover<float[]> covering = SearchCover.<float[]>newBuilder()
+                .withSearch(KNNSearch.<float[]>newBuilder()
+                        .withMetric(TopologyUtils.pullback(lens, metric))
+                        .withNeighbors(3))
                 .build();
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(2, groups.size());
 
-        SearchAlgorithm<float[]> knnSearch2 = new KNNSearch.Builder<float[]>()
-                .withMetric(TopologyUtils.pullback(lens, metric))
-                .withNeighbors(1)
-                .build();
-        covering = new SearchCover.Builder<float[]>()
-                .withSearchAlgorithm(knnSearch2)
+        covering = SearchCover.<float[]>newBuilder()
+                .withSearch(KNNSearch.<float[]>newBuilder()
+                        .withMetric(TopologyUtils.pullback(lens, metric))
+                        .withNeighbors(1))
                 .build();
         groups = covering.run(dataset);
         Assertions.assertEquals(6, groups.size());
     }
 
     @Test
-    public void testRandom() {
+    public void testRandom() throws NoCoverAlgorithm {
         ArrayList<float[]> dataset = new ArrayList<>();
         dataset.addAll(DatasetGenerator.randomDataset(2000, 2, new float[] { 1.0f, 0.0f }, 0.1f));
         dataset.addAll(DatasetGenerator.randomDataset(2000, 2, new float[] { 0.0f, 1.0f }, 0.1f));
-        SearchAlgorithm<float[]> knnSearch = new KNNSearch.Builder<float[]>()
-                .withMetric(TopologyUtils.pullback(lens, metric))
-                .withNeighbors(2000)
-                .build();
-        CoverAlgorithm<float[]> covering = new SearchCover.Builder<float[]>()
-                .withSearchAlgorithm(knnSearch)
+        Cover<float[]> covering = SearchCover.<float[]>newBuilder()
+                .withSearch(KNNSearch.<float[]>newBuilder()
+                        .withMetric(TopologyUtils.pullback(lens, metric))
+                        .withNeighbors(2000))
                 .build();
         Collection<Collection<float[]>> groups = covering.run(dataset);
         Assertions.assertEquals(2, groups.size());

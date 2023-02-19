@@ -1,8 +1,8 @@
-package org.lucasimi.tda.mapper.cover;
+package org.lucasimi.tda.mapper.search;
 
 import java.util.Collection;
 
-public interface SearchAlgorithm<S> {
+public interface Search<S> {
 
     public Collection<S> fit(Collection<S> dataset);
 
@@ -10,7 +10,7 @@ public interface SearchAlgorithm<S> {
 
     public static interface Builder<S> {
 
-        public SearchAlgorithm<S> build();
+        public Search<S> build();
 
     }
 

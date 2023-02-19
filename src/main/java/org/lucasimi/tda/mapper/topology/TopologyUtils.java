@@ -10,22 +10,8 @@ public class TopologyUtils {
         return source -> source;
     }
 
-    public static <S> Lens<S, Double> distFrom(Metric<S> metric, S center) {
-        return point -> metric.eval(center, point);
-    }
-
     public static <S, T> Metric<S> pullback(Lens<S, T> lens, Metric<T> targetMetric) {
         return (first, second) -> targetMetric.eval(lens.evaluate(first), lens.evaluate(second));
-    }
-
-    public static Lens<float[], Float> euclideanNorm() {
-        return point -> {
-            float sum = 0.0f;
-            for (int i = 0; i < point.length; i++) {
-                sum += point[i] * point[i];
-            }
-            return (float) Math.sqrt(sum);
-        };
     }
 
     public static Metric<float[]> euclideanMetric() {

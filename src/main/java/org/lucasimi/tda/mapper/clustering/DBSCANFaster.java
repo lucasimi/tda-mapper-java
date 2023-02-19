@@ -13,7 +13,7 @@ import org.lucasimi.vptree.VPTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DBSCANFaster<T> implements ClusteringAlgorithm<T> {
+public class DBSCANFaster<T> implements Clustering<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DBSCANFaster.class);
 
@@ -32,7 +32,11 @@ public class DBSCANFaster<T> implements ClusteringAlgorithm<T> {
         CLUSTERED
     }
 
-    public DBSCANFaster(Metric<T> metric, Double eps, Integer minSamples) {
+    public static <S> Builder<S> newBuilder() {
+        return new Builder<>();
+    }
+
+    private DBSCANFaster(Metric<T> metric, Double eps, Integer minSamples) {
         this.metric = metric;
         this.eps = eps;
         this.minSamples = minSamples;
@@ -101,13 +105,15 @@ public class DBSCANFaster<T> implements ClusteringAlgorithm<T> {
         return clusters;
     }
 
-    public static class Builder<S> implements ClusteringAlgorithm.Builder<S> {
+    public static class Builder<S> implements Clustering.Builder<S> {
 
         private int minSamples = MIN_SAMPLES_DEFAULT;
 
         private double eps = EPS_DEFAULT;
 
         private Metric<S> metric;
+
+        private Builder() {}
 
         public Builder<S> withMetric(Metric<S> metric) {
             this.metric = metric;
@@ -125,7 +131,7 @@ public class DBSCANFaster<T> implements ClusteringAlgorithm<T> {
         }
 
         @Override
-        public ClusteringAlgorithm<S> build() {
+        public Clustering<S> build() {
             if (Double.isNaN(this.eps) || Double.isInfinite(this.eps) || this.eps <= 0) {
                 LOGGER.warn("Found eps = {}, but expected > 0. Using default eps = {}", eps, EPS_DEFAULT);
                 this.eps = EPS_DEFAULT;

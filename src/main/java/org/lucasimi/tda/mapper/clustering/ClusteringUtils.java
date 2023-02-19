@@ -8,8 +8,8 @@ public class ClusteringUtils {
     private ClusteringUtils() {
     }
 
-    public static <S> ClusteringAlgorithm<S> trivialClustering() {
-        return new ClusteringAlgorithm<S>() {
+    public static <S> Clustering<S> trivialClustering() {
+        return new Clustering<S>() {
             @Override
             public Collection<Collection<S>> run(Collection<S> dataset) {
                 return Collections.singleton(dataset);
@@ -17,10 +17,10 @@ public class ClusteringUtils {
         };
     }
 
-    public static <S> ClusteringAlgorithm.Builder<S> trivialClusteringBuilder() {
-        return new ClusteringAlgorithm.Builder<S>() {
+    public static <S> Clustering.Builder<S> trivialClusteringBuilder() {
+        return new Clustering.Builder<S>() {
             @Override
-            public ClusteringAlgorithm<S> build() {
+            public Clustering<S> build() {
                 return trivialClustering();
             }
         };
