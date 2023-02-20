@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.lucasimi.tda.mapper.clustering.Clustering;
 import org.lucasimi.tda.mapper.clustering.ClusteringUtils;
 import org.lucasimi.tda.mapper.cover.Cover;
+import org.lucasimi.tda.mapper.topology.Lens;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,12 +19,12 @@ public class MapperPipeline<S> {
 
     private Clustering.Builder<S> clusteringBuilder;
 
-    public static <T> Builder<T> newBuilder() {
+    public static <S, T> Builder<S, T> newBuilder() {
         return new Builder<>();
     }
 
-    private MapperPipeline(Builder<S> builder) {
-        this.coverBuilder = builder.coverBuilder;
+    private <T> MapperPipeline(Builder<S, T> builder) {
+        this.coverBuilder = builder.coverBuilder.withLens(builder.lens);
         this.clusteringBuilder = builder.clusteringBuilder;
     }
 
@@ -63,30 +64,40 @@ public class MapperPipeline<S> {
         return graph;
     }
 
-    public static class Builder<S> {
+    public static class Builder<S, T> {
 
-        private Cover.Builder<S> coverBuilder;
+        private Cover.Builder<T> coverBuilder;
 
         private Clustering.Builder<S> clusteringBuilder;
 
+        private Lens<S, T> lens;
+
         private Builder() {}
 
-        public Builder<S> withCover(Cover.Builder<S> coverBuilder) {
+        public Builder<S, T> withCover(Cover.Builder<T> coverBuilder) {
             this.coverBuilder = coverBuilder;
             return this;
         }
 
-        public Builder<S> withClustering(Clustering.Builder<S> clusteringBuilder) {
+        public Builder<S, T> withClustering(Clustering.Builder<S> clusteringBuilder) {
             this.clusteringBuilder = clusteringBuilder;
+            return this;
+        }
+
+        public Builder<S, T> withLens(Lens<S, T> lens) {
+            this.lens = lens;
             return this;
         }
 
         public MapperPipeline<S> build() throws MapperException {
             if (this.clusteringBuilder == null) {
-                throw new MapperException.NoClusteringAlgorithm();
+                throw new MapperException.ClusteringException();
             }
             if (this.coverBuilder == null) {
-                throw new MapperException.NoCoverAlgorithm();
+                throw new MapperException.CoverException();
+            }
+            if (this.lens == null) {
+                throw new MapperException.LensException();
             }
             return new MapperPipeline<>(this);
         }

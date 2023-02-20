@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.lucasimi.tda.mapper.DatasetGenerator;
-import org.lucasimi.tda.mapper.pipeline.MapperException.NoCoverAlgorithm;
+import org.lucasimi.tda.mapper.pipeline.MapperException.CoverException;
 import org.lucasimi.tda.mapper.search.BallSearch;
 import org.lucasimi.tda.mapper.topology.Lens;
 import org.lucasimi.tda.mapper.topology.TopologyUtils;
@@ -21,7 +21,7 @@ public class BallCoverTest {
     Lens<float[], float[]> lens = TopologyUtils.identity();
 
     @Test
-    public void testOneCover() throws NoCoverAlgorithm {
+    public void testOneCover() throws CoverException {
         List<float[]> dataset = new LinkedList<>();
         dataset.add(new float[] { 0.0f, 1.0f });
         dataset.add(new float[] { 1.0f, 1.0f });
@@ -45,7 +45,7 @@ public class BallCoverTest {
     }
 
     @Test
-    public void testTwoCovers() throws NoCoverAlgorithm {
+    public void testTwoCovers() throws CoverException {
         List<float[]> dataset = new LinkedList<>();
         // first cc
         dataset.add(new float[] { 0.0f, 1.0f });
@@ -74,7 +74,7 @@ public class BallCoverTest {
     }
 
     @Test
-    public void testRandom() throws NoCoverAlgorithm {
+    public void testRandom() throws CoverException {
         ArrayList<float[]> dataset = new ArrayList<>();
         dataset.addAll(DatasetGenerator.randomDataset(20000, 2, new float[] { 1.0f, 0.0f }, 0.3f));
         dataset.addAll(DatasetGenerator.randomDataset(20000, 2, new float[] { 0.0f, 1.0f }, 0.3f));

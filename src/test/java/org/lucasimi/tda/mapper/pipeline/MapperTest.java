@@ -32,7 +32,8 @@ public class MapperTest {
         float side = 1.0f;
         ArrayList<float[]> dataset = DatasetGenerator.randomDataset(size, dim, 0.0f, side);
         float radius = (float) (side * Math.sqrt(dim) / Math.pow(size, 1.0 / dim));
-        MapperPipeline<float[]> mapperPipeline = MapperPipeline.<float[]>newBuilder()
+        MapperPipeline<float[]> mapperPipeline = MapperPipeline.<float[], float[]>newBuilder()
+                .withLens(TopologyUtils.identity())
                 .withCover(SearchCover.<float[]>newBuilder()
                         .withSearch(BallSearch.<float[]>newBuilder()
                                 .withMetric(TopologyUtils.pullback(lens, metric))
@@ -50,7 +51,8 @@ public class MapperTest {
         dataset.add(new float[] { 1.0f, 1.0f });
         dataset.add(new float[] { 1.0f, 0.0f });
 
-        MapperPipeline<float[]> mapperPipeline = MapperPipeline.<float[]>newBuilder()
+        MapperPipeline<float[]> mapperPipeline = MapperPipeline.<float[], float[]>newBuilder()
+                .withLens(TopologyUtils.identity())
                 .withCover(SearchCover.<float[]>newBuilder()
                         .withSearch(BallSearch.<float[]>newBuilder()
                                 .withMetric(TopologyUtils.pullback(lens, metric))
@@ -74,7 +76,8 @@ public class MapperTest {
         dataset.add(new float[] { 0.0f, -1.1f });
         dataset.add(new float[] { 0.0f, -1.2f });
 
-        MapperPipeline<float[]> mapperPipeline = MapperPipeline.<float[]>newBuilder()
+        MapperPipeline<float[]> mapperPipeline = MapperPipeline.<float[], float[]>newBuilder()
+                .withLens(TopologyUtils.identity())
                 .withCover(SearchCover.<float[]>newBuilder()
                         .withSearch(BallSearch.<float[]>newBuilder()
                                 .withMetric(TopologyUtils.pullback(lens, metric))
@@ -86,7 +89,8 @@ public class MapperTest {
         assertEquals(6, graph.getVertices().size());
         assertEquals(6, graph.countConnectedComponents());
 
-        mapperPipeline = MapperPipeline.<float[]>newBuilder()
+        mapperPipeline = MapperPipeline.<float[], float[]>newBuilder()
+                .withLens(TopologyUtils.identity())
                 .withCover(SearchCover.<float[]>newBuilder()
                         .withSearch(BallSearch.<float[]>newBuilder()
                                 .withMetric(TopologyUtils.pullback(lens, metric))
@@ -104,7 +108,8 @@ public class MapperTest {
         dataset.addAll(DatasetGenerator.randomDataset(20000, 2, new float[] { 1.0f, 0.0f }, 0.3f));
         dataset.addAll(DatasetGenerator.randomDataset(20000, 2, new float[] { 0.0f, 1.0f }, 0.3f));
 
-        MapperPipeline<float[]> mapperPipeline = MapperPipeline.<float[]>newBuilder()
+        MapperPipeline<float[]> mapperPipeline = MapperPipeline.<float[], float[]>newBuilder()
+                .withLens(TopologyUtils.identity())
                 .withCover(SearchCover.<float[]>newBuilder()
                         .withSearch(BallSearch.<float[]>newBuilder()
                                 .withMetric(TopologyUtils.pullback(lens, metric))

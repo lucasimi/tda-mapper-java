@@ -2,6 +2,8 @@ package org.lucasimi.tda.mapper.search;
 
 import java.util.Collection;
 
+import org.lucasimi.tda.mapper.topology.Lens;
+import org.lucasimi.tda.mapper.topology.TopologyUtils;
 import org.lucasimi.utils.Metric;
 import org.lucasimi.vptree.VPTree;
 
@@ -57,6 +59,13 @@ public class KNNSearch<S> implements Search<S> {
         @Override
         public Search<S> build() {
             return new KNNSearch<>(this);
+        }
+
+        @Override
+        public <R> Builder<R> withLens(Lens<R, S> lens) {
+            return new Builder<R>()
+                .withNeighbors(this.neighbors)
+                .withMetric(TopologyUtils.pullback(lens, this.metric));
         }
 
     }

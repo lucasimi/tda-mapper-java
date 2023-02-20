@@ -3,30 +3,45 @@ package org.lucasimi.tda.mapper.cover;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.lucasimi.tda.mapper.pipeline.MapperException.CoverException;
+import org.lucasimi.tda.mapper.topology.Lens;
+
 public class CoverUtils {
 
     private CoverUtils() {
     }
 
     public static <S> Cover<S> trivialCover() {
-        return new Cover<S>() {
-
-            @Override
-            public Collection<Collection<S>> run(Collection<S> dataset) {
-                return Collections.singleton(dataset);
-            }
-
-        };
+        return new TrivialCover<>();
     }
 
     public static <S> Cover.Builder<S> trivialCoverBuilder() {
-        return new Cover.Builder<S>() {
+        return new TrivialCover.Builder<>();
+    }
+
+    private static class TrivialCover<S> implements Cover<S> {
+
+        private TrivialCover() {}
+
+        @Override
+        public Collection<Collection<S>> run(Collection<S> dataset) {
+            return Collections.singleton(dataset);
+        }
+
+        public static class Builder<S> implements Cover.Builder<S> {
 
             @Override
-            public Cover<S> build() {
-                return trivialCover();
+            public Cover<S> build() throws CoverException {
+                return new TrivialCover<>();
             }
-        };
+
+            @Override
+            public <R> Builder<R> withLens(Lens<R, S> lens) {
+                return new Builder<>();
+            }
+
+        }
+
     }
 
 }

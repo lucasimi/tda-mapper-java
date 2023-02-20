@@ -2,6 +2,8 @@ package org.lucasimi.tda.mapper.search;
 
 import java.util.Collection;
 
+import org.lucasimi.tda.mapper.topology.Lens;
+
 public interface Search<S> {
 
     public Collection<S> fit(Collection<S> dataset);
@@ -11,6 +13,8 @@ public interface Search<S> {
     public static interface Builder<S> {
 
         public Search<S> build();
+
+        public <R> Builder<R> withLens(Lens<R, S> lens);
 
     }
 
