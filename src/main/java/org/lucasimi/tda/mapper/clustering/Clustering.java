@@ -2,7 +2,7 @@ package org.lucasimi.tda.mapper.clustering;
 
 import java.util.Collection;
 
-import org.lucasimi.tda.mapper.pipeline.MapperException;
+import org.lucasimi.tda.mapper.pipeline.MapperException.ClusteringException;
 
 public interface Clustering<S> {
 
@@ -10,7 +10,7 @@ public interface Clustering<S> {
 
     public static interface Builder<S> {
 
-        public Clustering<S> build() throws MapperException;
+        public Clustering<S> build() throws ClusteringException;
 
     }
 

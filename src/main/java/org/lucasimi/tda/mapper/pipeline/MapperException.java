@@ -2,10 +2,12 @@ package org.lucasimi.tda.mapper.pipeline;
 
 public class MapperException extends Exception {
 
-    public static class NoClusteringAlgorithm extends MapperException {
-    }
+    private MapperException() {}
 
-    public static class NoCoverAlgorithm extends MapperException {
-    }
+    public static class ClusteringException extends MapperException {}
+
+    public static class CoverException extends MapperException {}
+
+    public static class LensException extends MapperException {}
 
 }
