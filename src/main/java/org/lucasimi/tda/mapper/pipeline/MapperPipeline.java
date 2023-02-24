@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.lucasimi.tda.mapper.clustering.Clustering;
-import org.lucasimi.tda.mapper.clustering.ClusteringUtils;
+import org.lucasimi.tda.mapper.clustering.TrivialClustering;
 import org.lucasimi.tda.mapper.cover.Cover;
 import org.lucasimi.tda.mapper.topology.Lens;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class MapperPipeline<S> {
     }
 
     private <T> MapperPipeline(Builder<S, T> builder) {
-        this.coverBuilder = builder.coverBuilder.withLens(builder.lens);
+        this.coverBuilder = builder.coverBuilder.pullback(builder.lens);
         this.clusteringBuilder = builder.clusteringBuilder;
     }
 
@@ -47,7 +47,7 @@ public class MapperPipeline<S> {
                         clustering = this.clusteringBuilder.build();
                     } catch (MapperException e) {
                         e.printStackTrace();
-                        clustering = ClusteringUtils.trivialClustering();
+                        clustering = TrivialClustering.<S>newBuilder().build();
                     }
                     return clustering.run(ds);
                 })
@@ -72,7 +72,8 @@ public class MapperPipeline<S> {
 
         private Lens<S, T> lens;
 
-        private Builder() {}
+        private Builder() {
+        }
 
         public Builder<S, T> withCover(Cover.Builder<T> coverBuilder) {
             this.coverBuilder = coverBuilder;

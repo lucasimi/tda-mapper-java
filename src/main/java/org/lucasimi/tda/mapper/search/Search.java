@@ -14,7 +14,7 @@ public interface Search<S> {
 
         public Search<S> build();
 
-        public <R> Builder<R> withLens(Lens<R, S> lens);
+        public <R> Builder<R> pullback(Lens<R, S> lens);
 
     }
 

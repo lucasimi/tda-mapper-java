@@ -10,8 +10,20 @@ public class TopologyUtils {
         return source -> source;
     }
 
-    public static <S, T> Metric<S> pullback(Lens<S, T> lens, Metric<T> targetMetric) {
-        return (first, second) -> targetMetric.eval(lens.evaluate(first), lens.evaluate(second));
+    public static Lens<float[], float[]> normalize(float[] sides) {
+        return point -> {
+            float[] nomalized = new float[point.length];
+            for (int i = 0; i < nomalized.length; i++) {
+                nomalized[i] = Float.NaN;
+            }
+            if (point.length != sides.length) {
+                return nomalized;
+            }
+            for (int i = 0; i < nomalized.length; i++) {
+                nomalized[i] = point[i] / sides[i];
+            }
+            return nomalized;
+        };
     }
 
     public static Lens<float[], float[]> projection(int i) {
@@ -36,6 +48,14 @@ public class TopologyUtils {
             }
             return val;
         };
+    }
+
+    public static <R, S, T> Lens<R, T> pullback(Lens<R, S> lens, Lens<S, T> fun) {
+        return x -> fun.evaluate(lens.evaluate(x));
+    }
+
+    public static <S, T> Metric<S> pullback(Lens<S, T> lens, Metric<T> targetMetric) {
+        return (first, second) -> targetMetric.eval(lens.evaluate(first), lens.evaluate(second));
     }
 
     public static Metric<float[]> euclideanMetric() {
@@ -84,4 +104,5 @@ public class TopologyUtils {
             return max;
         };
     }
+
 }

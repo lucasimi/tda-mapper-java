@@ -74,7 +74,7 @@ public class BallSearch<S> implements Search<S> {
         }
 
         @Override
-        public <R> Builder<R> withLens(Lens<R, S> lens) {
+        public <R> Builder<R> pullback(Lens<R, S> lens) {
             return new Builder<R>()
                 .withRadius(this.radius)
                 .withMetric(TopologyUtils.pullback(lens, this.metric));

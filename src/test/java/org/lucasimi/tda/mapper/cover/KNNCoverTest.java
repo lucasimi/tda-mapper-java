@@ -76,8 +76,8 @@ public class KNNCoverTest {
     @Test
     public void testRandom() throws CoverException {
         ArrayList<float[]> dataset = new ArrayList<>();
-        dataset.addAll(DatasetGenerator.randomDataset(2000, 2, new float[] { 1.0f, 0.0f }, 0.1f));
-        dataset.addAll(DatasetGenerator.randomDataset(2000, 2, new float[] { 0.0f, 1.0f }, 0.1f));
+        dataset.addAll(DatasetGenerator.randomDataset(2000, new float[] { 1.0f, 0.0f }, 0.1f));
+        dataset.addAll(DatasetGenerator.randomDataset(2000, new float[] { 0.0f, 1.0f }, 0.1f));
         Cover<float[]> covering = SearchCover.<float[]>newBuilder()
                 .withSearch(KNNSearch.<float[]>newBuilder()
                         .withMetric(TopologyUtils.pullback(lens, metric))
