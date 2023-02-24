@@ -2,6 +2,8 @@ package org.lucasimi.tda.mapper.search;
 
 import java.util.Collection;
 
+import org.lucasimi.tda.mapper.topology.Lens;
+import org.lucasimi.tda.mapper.topology.TopologyUtils;
 import org.lucasimi.utils.Metric;
 import org.lucasimi.vptree.VPTree;
 import org.slf4j.Logger;
@@ -70,6 +72,14 @@ public class BallSearch<S> implements Search<S> {
         public Search<S> build() {
             return new BallSearch<>(this);
         }
+
+        @Override
+        public <R> Builder<R> pullback(Lens<R, S> lens) {
+            return new Builder<R>()
+                .withRadius(this.radius)
+                .withMetric(TopologyUtils.pullback(lens, this.metric));
+        }
+
 
     }
 
