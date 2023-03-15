@@ -33,12 +33,12 @@ public class DatasetGenerator {
         return array;
     }
 
-    public static ArrayList<float[]> randomDataset(int size, int dimension, float[] center, float side) {
+    public static ArrayList<float[]> randomDataset(int size, float[] center, float side) {
         Random random = new Random();
         ArrayList<float[]> array = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            float[] values = new float[dimension];
-            for (int j = 0; j < dimension; j++) {
+            float[] values = new float[center.length];
+            for (int j = 0; j < center.length; j++) {
                 values[j] = center[j] + (float) random.doubles(-side, side).findFirst().getAsDouble();
             }
             array.add(values);
@@ -46,4 +46,16 @@ public class DatasetGenerator {
         return array;
     }
 
+    public static ArrayList<double[]> randomDatasetDouble(int size, double[] center, double side) {
+        Random random = new Random();
+        ArrayList<double[]> array = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            double[] values = new double[center.length];
+            for (int j = 0; j < center.length; j++) {
+                values[j] = center[j] + random.doubles(-side, side).findFirst().getAsDouble();
+            }
+            array.add(values);
+        }
+        return array;
+    }
 }
