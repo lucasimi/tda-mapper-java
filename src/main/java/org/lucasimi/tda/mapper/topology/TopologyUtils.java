@@ -66,7 +66,9 @@ public class TopologyUtils {
             float sum = 0.0f;
             for (int i = 0; i < first.length; i++) {
                 float diff = first[i] - second[i];
-                sum += diff * diff;
+                if (!Float.isNaN(diff) && Float.isFinite(diff)) {
+                    sum += diff * diff;
+                }
             }
             return (float) Math.sqrt(sum);
         };
@@ -83,7 +85,9 @@ public class TopologyUtils {
             float sum = 0.0f;
             for (int i = 0; i < first.length; i++) {
                 float diff = first[i] - second[i];
-                sum += Math.pow(diff, p);
+                if (!Float.isNaN(diff) && Float.isFinite(diff)) {
+                    sum += Math.pow(diff, p);
+                }
             }
             return (float) Math.pow(sum, 1.0f / p);
         };
@@ -97,11 +101,13 @@ public class TopologyUtils {
             float max = Float.NEGATIVE_INFINITY;
             for (int i = 0; i < first.length; i++) {
                 float absDiff = Math.abs(first[i] - second[i]);
-                if (Float.compare(absDiff, max) > 0) {
-                    max = absDiff;
+                if (!Float.isNaN(absDiff) && Float.isFinite(absDiff)) {
+                    if (Float.compare(absDiff, max) > 0) {
+                        max = absDiff;
+                    }
                 }
             }
-            return max;
+            return Math.abs(max);
         };
     }
 
