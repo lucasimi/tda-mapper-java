@@ -19,7 +19,7 @@ jobs:
       - name: Remove snapshot from version
         run: mvn --batch-mode versions:set -DremoveSnapshot
       - name: Fetch pom version 
-        run: echo "$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $env:POM_VERSION
+        run: echo "v$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $env:POM_VERSION
       - name: Check pom version
         if: ${{ env.POM_VERSION != github.ref_name }} 
         run: | 
