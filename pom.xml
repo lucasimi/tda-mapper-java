@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.lucasimi.tda</groupId>
     <artifactId>tda-mapper</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>tda-mapper</name>
     <url>http://www.example.com</url>
 	<description>Java library for the Mapper Algorithm from TDA</description>
@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>org.lucasimi</groupId>
 			<artifactId>vptree</artifactId>
-    		<version>1.0-SNAPSHOT</version>
+    		<version>1.0.0</version>
 		</dependency>
 		<dependency>
             <groupId>org.junit.jupiter</groupId>
