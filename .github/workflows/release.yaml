@@ -23,7 +23,7 @@ jobs:
       - name: Check pom version
         if: ${{ env.POM_VERSION != github.ref_name }} 
         run: | 
-          echo "::error The pom version $env:POM_VERSION differs from the tag $env:TAG_VERSION"
+          echo "::error The pom version $POM_VERSION differs from the tag $TAG_VERSION"
           exit 1
         env:
           TAG_VERSION: ${{ github.ref_name }}
