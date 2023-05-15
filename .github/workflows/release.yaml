@@ -1,0 +1,32 @@
+name: release
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  release-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - name: Remove snapshot from version
+        run: mvn --batch-mode versions:set -DremoveSnapshot
+      - name: Fetch pom version 
+        run: echo "$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $env:POM_VERSION
+      - name: Check pom version
+        if: ${{ env.POM_VERSION != github.ref_name }} 
+        run: | 
+          echo "::error The pom version differs from the tag"
+          exit 1
+      - name: Publish release package
+        if: ${{ env.POM_VERSION == github.ref_name }} 
+        run: mvn --batch-mode clean deploy
+        env:
+          PACKAGES_WRITE_PAT: ${{ secrets.GITHUB_TOKEN }}
