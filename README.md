@@ -1,6 +1,6 @@
 # tda-mapper-java
 
-[![test](https://github.com/lucasimi/tda-mapper-java/actions/workflows/test.yaml/badge.svg)](https://github.com/lucasimi/tda-mapper-java/actions/workflows/test.yaml) [![deploy](https://github.com/lucasimi/tda-mapper-java/actions/workflows/deploy.yaml/badge.svg)](https://github.com/lucasimi/tda-mapper-java/actions/workflows/deploy.yaml)
+[![test](https://github.com/lucasimi/tda-mapper-java/actions/workflows/test.yaml/badge.svg)](https://github.com/lucasimi/tda-mapper-java/actions/workflows/test.yaml) [![deploy](https://github.com/lucasimi/tda-mapper-java/actions/workflows/deploy.yaml/badge.svg)](https://github.com/lucasimi/tda-mapper-java/actions/workflows/deploy.yaml) [![release](https://github.com/lucasimi/tda-mapper-java/actions/workflows/release.yaml/badge.svg)](https://github.com/lucasimi/tda-mapper-java/actions/workflows/release.yaml)
 
 A Java library for the Mapper Algorithm from TDA, working on any metric space.
 
