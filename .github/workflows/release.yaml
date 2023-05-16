@@ -30,3 +30,4 @@ jobs:
         run: mvn --batch-mode clean deploy
         env:
           PACKAGES_WRITE_PAT: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGES_READ_PAT: ${{ secrets.GITHUB_TOKEN }}
